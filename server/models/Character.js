@@ -8,20 +8,17 @@ const characterSchema = new mongoose.Schema({
     unique: true
   },
   description: String,
-  photo: {
-    type: String,
-    unique: true
-  },
+  photo: String,
   character_card: {
     type: String,
     required: true,
     unique: true
   },
-  cards: [{type: Schema.Types.ObjectId, ref: 'Cards'}],
+  cards: [{type: Schema.Types.ObjectId, ref: 'Card'}],
   version: {
     type: Number,
     required: true
   }
 });
 
-module.exports = mongoose.model('Characters', characterSchema)
+module.exports = mongoose.model('Character', characterSchema)

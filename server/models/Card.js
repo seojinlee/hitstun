@@ -17,13 +17,13 @@ const cardSchema = new mongoose.Schema({
     vertical: Number,
   },
   hit: {
-    1: Boolean,
-    2: Boolean,
-    3: Boolean,
-    4: Boolean,
-    5: Boolean,
-    6: Boolean,
-    7: Boolean,
+    1: {type: Boolean, default: false},
+    2: {type: Boolean, default: false},
+    3: {type: Boolean, default: false},
+    4: {type: Boolean, default: false},
+    5: {type: Boolean, default: false},
+    6: {type: Boolean, default: false},
+    7: {type: Boolean, default: false}
   },
   prio: {
     type: Number,
@@ -36,6 +36,10 @@ const cardSchema = new mongoose.Schema({
   crush: {
     type: Boolean,
     default: false
+  },
+  timer: {
+    type: Number,
+    default: 0
   },
   active: {
     damage: Number,
@@ -54,8 +58,8 @@ const cardSchema = new mongoose.Schema({
       default: false
     },
     supercharge: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     block: {
       type: Boolean,
@@ -82,4 +86,4 @@ const cardSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Cards', cardSchema)
+module.exports = mongoose.model('Card', cardSchema)

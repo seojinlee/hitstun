@@ -23,9 +23,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const api = require('./routes/api');
+const admin = require('./routes/admin');
 
-app.use('/api/', api)
+app.use('/admin', admin)
 
 
 const port = process.env.PORT || 5000;
