@@ -81,7 +81,7 @@ router.delete('/stages/:id', async (req, res) => {
 });
 
 
-async function create(Model) {
+async function create(Model, req, res) {
   try {
     const collection = await Model.create(req.body);
     res.status(201).send(collection);
@@ -125,7 +125,8 @@ async function deleteOne(Model, req, res) {
     res.sendStatus(200);
   } catch (err) {
     console.log(err)
-    res.status(400).send(err.errmsg);
+    res.status(400).send(err.errmsg)
+    ;
   }
 }
 

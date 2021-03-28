@@ -1,8 +1,22 @@
+const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const socketio = require('socket.io');
 
+const app = express();
+const server = http.createServer(app);
+
+//Socket.io
+const io = socketio(server, {
+  cors: {
+    origin: 'http://localhost:8080',
+    methods: ['GET', 'POST ']
+  }
+});
+
+//Connect to MongoDB
 mongoose.set('useCreateIndex', true)
 
 mongoose.connect('mongodb+srv://seojin0404:gbjEc2B2iD5r@hitstun.5oqta.mongodb.net/', {
@@ -17,17 +31,17 @@ mongoose.connect('mongodb+srv://seojin0404:gbjEc2B2iD5r@hitstun.5oqta.mongodb.ne
   }
 });
 
-const app = express();
-
 //Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
+const api = require('./routes/api');
 const admin = require('./routes/admin');
 
+app.use('/', api)
 app.use('/admin', admin)
 
+require('./socket/socket')(io)
 
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log(`Server started on port ${port}`));
+server.listen(port, () => console.log(`Server started on port ${port}`));
