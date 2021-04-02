@@ -1,0 +1,54 @@
+@font-face {
+  font-family: 'Paladins Laser Regular';
+  src: url('./assets/fonts/PaladinsLaser-BERx.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins 3D Regular';
+  src: url('./assets/fonts/Paladins3D-1Kwg.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Gradient Regular';
+  src: url('./assets/fonts/PaladinsGradient-R6VW.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Laser Regular';
+  src: url('./assets/fonts/PaladinsLaser-BERx.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Leftalic Regular';
+  src: url('./assets/fonts/PaladinsLeftalic-KmB7.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Outline Regular';
+  src: url('./assets/fonts/PaladinsOutline-8PE0.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Semi-Italic Regular';
+  src: url('./assets/fonts/PaladinsSemiItalic-Y6Yo.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Straight Regular';
+  src:url('./assets/fonts/PaladinsStraight-2a7v.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Condensed Condensed';
+  src: url('./assets/fonts/PaladinsCondensed-rB77.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Expanded Expanded';
+  src: url('./assets/fonts/PaladinsExpanded-MPYY.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Paladins Super-Italic Italic';
+  src: url('./assets/fonts/PaladinsSuperItalic-vz3A.woff') format('woff');
+}
