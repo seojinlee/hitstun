@@ -7,7 +7,26 @@ const roomSchema = new mongoose.Schema({
     unique: true,
     default: "default_room"
   },
-  players: [Schema.Types.Mixed],
+  players: [{
+    id: String,
+    username: String,
+    room: String,
+    playing: Boolean,
+    character: {type: Schema.Types.ObjectId, ref: 'Character'},
+    num: Number,
+    ready: String,
+    color: String
+  }],
+  turn: [{
+    player1: {
+      card: {type: Schema.Types.ObjectId, ref: 'Card'},
+      supermove: Number
+    },
+    player2: {
+      card: {type: Schema.Types.ObjectId, ref: 'Card'},
+      supermove: Number
+    }
+  }],
   stage: {type: Schema.Types.ObjectId, ref: 'Stage'}
 });
 

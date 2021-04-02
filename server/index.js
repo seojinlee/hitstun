@@ -1,4 +1,5 @@
 const http = require('http');
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -7,6 +8,13 @@ const socketio = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+
+//Set static folder
+app.use('/bulma', express.static(path.join(__dirname, '../node_modules/bulma/css')));
+app.use('/fa', express.static(path.join(__dirname, '../node_modules/font-awesome/css')));
+app.use('/mdi', express.static(path.join(__dirname, '../node_modules/@mdi/font/css')));
+app.use('/fonts', express.static(__dirname + '/node_modules/font-awesome/fonts'));
+app.use(express.static(path.join(__dirname, 'public')))
 
 //Socket.io
 const io = socketio(server, {
@@ -38,7 +46,7 @@ app.use(cors());
 const api = require('./routes/api');
 const admin = require('./routes/admin');
 
-app.use('/', api)
+app.use('/api', api)
 app.use('/admin', admin)
 
 require('./socket/socket')(io)

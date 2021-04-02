@@ -38,7 +38,12 @@ router.get('/room', async (req, res) => {
 router.get('/room/:name', async (req, res) => {
   try {
     const roomName = req.params.name;
-    const room = await Room.findOne({room: roomName});
+    const room = await Room
+      .findOne({room: roomName})
+      .populate({
+        path:' players',
+        populate: 'character'
+      });
     res.send(room);
   } catch (err) {
     console.log(err)
@@ -79,6 +84,17 @@ router.get('/characters', async (req, res) => {
     res.status(400).send(err.errmsg);
   }
 });
+router.get('/characters/:_id', async (req, res) => {
+  try {
+    const character = await Character
+      .findOne({_id: req.params._id})
+      .populate('cards');
+    res.send(character);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.errmsg);
+  }
+});
 
 router.get('/stages', async (req, res) => {
   try {
@@ -92,15 +108,14 @@ router.get('/stages', async (req, res) => {
 router.get('/stages/:id', async (req, res) => {
   try {
     const stageId = req.params.id;
-    console.log(stageId)
     const stage = await Stage.findOne({_id: stageId});
-    console.log(stage)
     res.send(stage);
   } catch (err) {
     console.log(err)
     res.status(400).send(err.errmsg);
   }
 });
+
 router.post('/createGame', async (req, res) => {
   try {
     const {roomName, players, stage} = req.body;

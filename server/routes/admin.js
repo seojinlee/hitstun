@@ -8,12 +8,54 @@ const Stage = require('../models/Stage')
 
 const router = express.Router();
 
+router.get('/', async (req, res) => {
+  try {
+    const characters = await Character.find({})
+    const cards = await Card.find({})
+    const stages = await Stage.find({})
+
+    const data = {
+      characters: characters,
+      cards: cards,
+      stages: stages
+    }
+    res.send(data)
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
+})
+
 //Characters
 router.post('/characters', async (req, res) => {
   create(Character, req, res)
 });
+
+////////temp route to add cards
+router.post('/characters/:character_id/:card_id', async (req, res) => {
+  try {
+    const character = await Character
+      .findOneAndUpdate({_id: req.params.character_id}, {
+        $push: {cards: req.params.card_id}
+      }, {new: true}, {useFindAndModify: true});
+
+    res.status(201).send(character);
+    
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
+});
+///////////
+
 router.get('/characters', async (req, res) => {
-  getAll(Character, req, res)
+  try {
+    const characters = await Character.find({}).populate('cards');
+    res.send(characters);
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
 });
 router.get('/characters/:id', async (req, res) => {
   getOne(Character, req, res)

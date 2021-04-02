@@ -8,9 +8,16 @@ module.exports = (io) => {
     getPlayers,
     ready
   } = require('./lobby');
+  const {
+    createGame,
+    addTurn,
+    nextTurn
+  } = require('./game');
 
   io.on('connection', socket => {
     console.log('Socket connected.')
+
+    //------LOBBY---------
 
     // Listen for player join
     socket.on('joinRoom', ({ username, room }) => {
@@ -54,9 +61,9 @@ module.exports = (io) => {
     // Listen for when players are ready
     socket.on('ready', ({ playing, character, stage }) => {
       const player = playerUpdate(socket.id, playing, character);
-      const players = getRoomUsers(player.room);
 
       const {startGame, playersNotReady} = ready(socket.id, player.room);
+      const players = getRoomUsers(player.room);
 
       if (startGame) {
         socket.emit('createGame', {
@@ -74,8 +81,37 @@ module.exports = (io) => {
 
     socket.on('startGame', () => {
       player = getCurrentPlayer(socket.id);
+      createGame(player.room)
       io.to(player.room).emit('startGame');
     });
+
+
+    //------GAME---------
+
+    socket.on('loadGame', (name) => {
+      //player = getCurrentPlayer(socket.id); dev-change
+      player = getCurrentPlayer(name);
+      console.log(name)
+      socket.emit('loadGame');
+    })
+
+    socket.on('turnReady', ({action, name}) => {
+      //player = getCurrentPlayer(socket.id); dev-change
+      player = getCurrentPlayer(name)
+      game = addTurn(player.room, action, player.num);
+      console.log(game)
+      //io.to(player.room).emit('turn', game); dev-change
+      io.emit('turn', game)
+    })
+
+    socket.on('nextTurn', (name) => {
+      //player = getCurrentPlayer(socket.id); dev-change
+      player = getCurrentPlayer(name)
+      nextTurn(player.room);
+    })
+
+
+
 
     // Runs when client disconnects
     socket.on('disconnect', () => {
