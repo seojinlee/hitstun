@@ -37,7 +37,7 @@ router.post('/characters/:character_id/:card_id', async (req, res) => {
     const character = await Character
       .findOneAndUpdate({_id: req.params.character_id}, {
         $push: {cards: req.params.card_id}
-      }, {new: true}, {useFindAndModify: true});
+      }, {new: true, useFindAndModify: true},);
 
     res.status(201).send(character);
     
