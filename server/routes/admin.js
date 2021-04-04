@@ -46,7 +46,35 @@ router.post('/characters/:character_id/:card_id', async (req, res) => {
     res.status(400).send(err.errmsg);
   }
 });
+
+router.get('/characters/addCards/:character_id', async (req, res) => {
+  try {
+    const character = await Character.findOne({_id: req.params.character_id});
+
+    const cards = await Card.find({});
+
+    const characterCards = [];
+    cards.forEach(card => {
+      if (card.assoc == "Basic") characterCards.push(card)
+      if (card.assoc == character._id) characterCards.push(card)
+    })
+    console.log(characterCards)
+
+    character.cards = characterCards
+
+    character.save((err) => {
+      if (err) throw err
+
+      res.status(201).send(character);
+    })
+    
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
+});
 ///////////
+
 
 router.get('/characters', async (req, res) => {
   try {

@@ -1,6 +1,5 @@
 <template>
   <section class="HUD">
-
     <div class="content columns">
       <div class="column is-half">
         <div class="health">
@@ -26,7 +25,6 @@
         </div>
       </div>
     </div>
-
   </section>
 </template>
 

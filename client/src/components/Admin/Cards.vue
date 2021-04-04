@@ -107,7 +107,10 @@ export default {
   },
   watch: {
     selected () {
-      this.cardToUpdate = JSON.stringify(this.selected, null, 4)
+      let selectedClone = this.selected
+      delete selectedClone._id
+      delete selectedClone.__v
+      this.cardToUpdate = JSON.stringify(selectedClone, null, 4)
     }
   },
 }

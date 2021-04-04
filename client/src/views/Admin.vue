@@ -62,7 +62,7 @@ export default {
     deleteCard (cards) {
       console.log('delete: ', cards)
     },
-    
+
     addStage: async function (stage) {
       this.stages = (await AdminService.addStage(stage)).data
     },

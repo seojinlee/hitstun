@@ -101,44 +101,45 @@ export default {
       character: {},
       card: 
       `{
-        "movement": {
-            "lateral": 0,
-            "vertical": 0
-        },
-        "hit": {
-            "1": false,
-            "2": false,
-            "3": false,
-            "4": false,
-            "5": false,
-            "6": false,
-            "7": false
-        },
-        "active": {
-            "displace": {
-                "lateral": 0,
-                "vertical": 0
-            },
-            "hitstun": false,
-            "damage": 0
-        },
-        "passive": {
-            "unblockable": false,
-            "supercharge": 0,
-            "block": false
-        },
-        "target": {
-            "high": false,
-            "mid": false,
-            "low": false
-        },
-        "crush": false,
-        "timer": 0,
-        "name": "",
-        "card_type": "",
-        "prio": 0,
-        "cooldown": 0,
-        "version": 0,
+          "movement": {
+              "lateral": 1,
+              "vertical": 0
+          },
+          "hit": {
+              "1": false,
+              "2": false,
+              "3": false,
+              "4": false,
+              "5": false,
+              "6": false,
+              "7": false
+          },
+          "active": {
+              "displace": {
+                  "lateral": 0,
+                  "vertical": 0
+              },
+              "hitstun": false,
+              "damage": 0
+          },
+          "passive": {
+              "unblockable": false,
+              "supercharge": 0,
+              "block": false
+          },
+          "target": {
+              "high": false,
+              "mid": false,
+              "low": false
+          },
+          "assoc": "Basic",
+          "crush": false,
+          "timer": 0,
+          "name": "Front Step",
+          "card_type": "Move",
+          "prio": 0,
+          "cooldown": 0,
+          "version": 1.4
       }`,
       stage: {},
 
@@ -160,7 +161,7 @@ export default {
     addCard () {
       try {
         if (this.card == '') throw "Received empty input."
-
+          
         this.$emit('addCard', JSON.parse(this.card))
       }
       catch (err) {

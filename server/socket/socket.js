@@ -100,8 +100,11 @@ module.exports = (io) => {
       player = getCurrentPlayer(name)
       game = addTurn(player.room, action, player.num);
       console.log(game)
-      //io.to(player.room).emit('turn', game); dev-change
-      io.emit('turn', game)
+      if (game.turns[game.turns.length-1].length > 1) {
+        //io.to(player.room).emit('turn', game); dev-change
+        io.emit('turn', game)
+
+      }
     })
 
     socket.on('nextTurn', (name) => {

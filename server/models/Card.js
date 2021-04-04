@@ -9,7 +9,25 @@ const cardSchema = new mongoose.Schema({
   },
   description: String,
   card_type: {
+    attack: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    move: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    super: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
+  assoc: {
     type: String,
+    default: "Basic",
     required: true
   },
   photo: String,
@@ -38,7 +56,11 @@ const cardSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  timer: {
+  timed: {
+    type: Number,
+    default: 0
+  },
+  supercharge_cost: {
     type: Number,
     default: 0
   },
@@ -51,6 +73,18 @@ const cardSchema = new mongoose.Schema({
     hitstun: {
       type: Boolean,
       default: false
+    },
+    move_hitstun: {
+      type: Boolean,
+      default: false
+    },
+    bind: {
+      type: Boolean,
+      default: false
+    },
+    supercharge: {
+      type: Number,
+      default: 0
     }
   },
   passive: {
@@ -66,6 +100,10 @@ const cardSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
+  },
+  post: {
+    type: Boolean,
+    default: false
   },
   target: {
     high: {

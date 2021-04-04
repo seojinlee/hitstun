@@ -55,31 +55,11 @@
               >
               </b-table>
             </b-field>
-            <div class="buttons" v-if="selected.name">
-              <b-button label="Manage" type="is-success" @click="isCardModalActive = true"/>
-            </div>
           </div>
         </div>
 
       </div>
     </div>
-
-    <b-modal v-model="isCardModalActive" :width="640" scroll="keep">
-      <div class="card">
-        <div class="card-content">
-          <b-field>
-            <b-table
-              :data="cards"
-              :columns="addCardsColumns"
-              :checked-rows.sync="checkedCards"
-              checkable
-              searchable>
-            </b-table>
-          </b-field>
-          <b-button label="Update" type="is-info" @click="updateCards()"/>
-        </div>
-      </div>
-    </b-modal>
 
   </section>
 </template>
@@ -106,17 +86,8 @@ export default {
           label: 'Cards',
         },
       ],
-      addCardsColumns: [
-        {
-          field: 'name',
-          label: 'Cards (Search below)',
-          searchable: true
-        },
-      ],
 
       characterToUpdate: {},
-
-      isCardModalActive: false
     }
   },
   methods: {
@@ -136,24 +107,11 @@ export default {
     },
     updateCharacter () {
       console.log(this.characterToUpdate)
-    },
-    updateCards () {
-
     }
   },
   watch: {
     selected () {
       this.characterToUpdate = {...this.selected}
-      this.checkedCards = []
-
-      this.cards.forEach(card => {
-        this.selected.cards.forEach(selectedCard => {
-          if (card._id === selectedCard._id) this.checkedCards.push(card)
-        })
-      })
-    },
-    checkedCards () {
-      console.log(this.checkedCards)
     }
   }
 }

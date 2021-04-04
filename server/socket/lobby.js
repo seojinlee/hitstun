@@ -6,7 +6,7 @@ players = [
     username: 'jim',
     room: 'default_room',
     playing: true,
-    character: "605b1170d37af9220cc6b418",
+    character: "605b11ddd37af9220cc6b41b",
     num: 0
   },
   {
@@ -14,7 +14,7 @@ players = [
     username: 'seojin',
     room: 'default_room',
     playing: true,
-    character: "605b1170d37af9220cc6b418",
+    character: "605b11ddd37af9220cc6b41b",
     num: 1
   }
 ]

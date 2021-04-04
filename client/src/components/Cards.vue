@@ -3,7 +3,7 @@
     <div class="content">
       <div class="cards-container">
         <div class="card-p"
-          v-for="card in cards"
+          v-for="card in activeCards"
           :key=card._id
           @click="playCard(card._id)">
           <span class="card-text">{{card.name}}</span>
@@ -24,6 +24,7 @@ export default {
       name: '', //dev-change
       character: {},
       cards: [],
+      activeCards: [],
       supermove: 0,
       burst: false,
       actions: []
@@ -46,8 +47,9 @@ export default {
       // this.player = player
       // console.log("player: ", this.player)
       // this.character = (await GameService.getCharacter(this.player.character)).data
-      this.character = (await GameService.getCharacter('605b1170d37af9220cc6b418')).data
+      this.character = (await GameService.getCharacter('605b11ddd37af9220cc6b41b')).data
       this.cards = this.character.cards
+      this.activeCards = this.cards
     }
   },
   async created () {
