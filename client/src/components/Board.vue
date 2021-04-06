@@ -254,7 +254,7 @@ export default {
           ]
 
           // If collision occurs, run collision resolution
-          if (potentialPos[0] == potentialPos[1]) {
+          if (potentialPos[0] == potentialPos[1] || Math.sign(player_move_count[0]) == Math.sign(player_move_count[1])) {
             // Check if one player is airbourne
             if (turn[0].action.card.movement.vertical > 0 || turn[1].action.card.movement.vertical > 0) {
               if (!(turn[0].action.card.movement.vertical > 0 && turn[1].action.card.movement.vertical > 0)) {
@@ -309,6 +309,7 @@ export default {
           // If no collision, move as normal
           else {
             for (let i=0; i<2; i++) {
+              console.log('no collision')
               new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
             }
           }
