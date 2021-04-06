@@ -33,26 +33,23 @@
     
         <div class="container">
           <div class="players-container">
-            <div v-bind:id="players[0]._id" class="player1">
+            <div :id="players[0]._id" class="player player1" ref="player1" :style="playerStyles[0]">
               {{players[0].username}}
             </div>
     
-            <div v-bind:id="players[1]._id" class="player2">
+            <div :id="players[1]._id" class="player player2" ref="player2" :style="playerStyles[1]">
               {{players[1].username}}
             </div>
           </div>
     
           <div class="spaces-container">
             <div class="end"></div>
-            <div class="space wall"> W
-            </div>
             <div class="space"
               v-for="(space, index) in boardSpaces"
               v-bind:class="space"
-              :key=index>
+              :key=index
+              :ref=index>
               {{space}}
-            </div>
-            <div class="space wall"> W
             </div>
             <div class="end"></div>
           </div>
@@ -98,7 +95,17 @@ export default {
             bind: false
           }
         }
+      ],
+      playerStyles: [
+        {
+          left: '',
+          top: ''
+        },
+        {
+          left: '',
+          top: ''}
       ]
+
     }
   },
   sockets: {
@@ -114,11 +121,11 @@ export default {
       this.players[0].vert = turn[0].player == 0 ? turn[0].action.card.movement.vertical : turn[1].action.card.movement.vertical
       this.players[1].pos = newPos[1]
       this.players[1].vert = turn[0].player == 1 ? turn[0].action.card.movement.vertical : turn[1].action.card.movement.vertical
-      this.move()
+      this.refresh()
 
       //Attack
-      this.players[0].supercharge -= turn[0].action.card.passive.supercharge
-      this.players[1].supercharge -= turn[1].action.card.passive.supercharge
+      this.players[0].supercharge += turn[0].action.card.passive.supercharge
+      this.players[1].supercharge += turn[1].action.card.passive.supercharge
 
       const playersHit = this.checkHit(turn)
 
@@ -127,32 +134,62 @@ export default {
       }
       console.log(playersHit)
 
+      console.log('players: ', this.players)
+
       this.$socket.emit('nextTurn', this.name) //dev-change
       
     }
   },
   methods: {
+    sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
     // BOARD CHANGES 
-    onResize () {
-      const player1_pos = document.getElementsByClassName('space')[this.players[0].pos].offsetLeft
-      const player2_pos = document.getElementsByClassName('space')[this.players[1].pos].offsetLeft
+    refresh () {
+      const refs = this.$refs
 
-      document.getElementById(this.players[0]._id).style.left = player1_pos+'px'
-      document.getElementById(this.players[1]._id).style.left = player2_pos+'px'
+      const player1_pos = refs[this.players[0].pos][0].offsetLeft
+      const player2_pos = refs[this.players[1].pos][0].offsetLeft
 
-      const player1Height = document.getElementById(this.players[0]._id).offsetHeight
-      const player2Height = document.getElementById(this.players[0]._id).offsetHeight
+      const player1Height = this.$refs.player1.offsetHeight
+      const player2Height = this.$refs.player2.offsetHeight
 
-      const topSpace = document.getElementsByClassName('space')[0].offsetTop
-      const heightSpace = document.getElementsByClassName('space')[0].offsetHeight
+      const topSpace = refs[1][0].offsetTop
+      const heightSpace = refs[1][0].offsetHeight
 
       const player1Vert = 1 - (this.players[0].vert +1)*0.5
       const player2Vert = 1 - (this.players[1].vert +1)*0.5
 
-      document.getElementById(this.players[0]._id).style.top = topSpace + heightSpace*player1Vert - player1Height*player1Vert +'px'
-      document.getElementById(this.players[1]._id).style.top = topSpace + heightSpace*player2Vert - player2Height*player2Vert +'px'
+      this.playerStyles[0].left = player1_pos+'px'
+      this.playerStyles[1].left = player2_pos+'px'
+      this.playerStyles[0].top = topSpace + heightSpace*player1Vert - player1Height*player1Vert +'px'
+      this.playerStyles[1].top = topSpace + heightSpace*player2Vert - player2Height*player2Vert +'px'
     },
 
+    async animate () {
+      const refs = this.$refs
+
+      const player1_pos = refs[this.players[0].pos][0].offsetLeft
+      const player2_pos = refs[this.players[1].pos][0].offsetLeft
+
+      const player1diff = player1_pos - parseInt(this.playerStyles[0].left)
+      const player2diff = player2_pos - parseInt(this.playerStyles[1].left)
+
+      for (let i=0; i<=Math.max(Math.abs(player1diff), Math.abs(player2diff)); i++) {
+        if (i<= Math.abs(player1diff) ) {
+          this.playerStyles[0].left = (parseInt(this.playerStyles[0].left) +1*Math.sign(player1diff)) +'px'
+        }
+        if (i<= Math.abs(player2diff) ) {
+          this.playerStyles[1].left = (parseInt(this.playerStyles[1].left) +1*Math.sign(player2diff)) +'px'
+        }
+        await this.sleep(3)
+      }
+      
+      // this.playerStyles[0].left = player1_pos+'px'
+      // this.playerStyles[1].left = player2_pos+'px'
+
+    },
 
     //
     parseTurn (turn) {
@@ -294,26 +331,6 @@ export default {
       return new_player_pos
 
     },
-    move () {
-      this.players.forEach(player => {
-        // Move horizontal
-        const moveTo = document.getElementsByClassName('space')[player.pos].offsetLeft
-        document.getElementById(player._id).style.left = moveTo+'px'
-
-        // Move vertical
-        const player1Height = document.getElementById(this.players[0]._id).offsetHeight
-        const player2Height = document.getElementById(this.players[0]._id).offsetHeight
-
-        const topSpace = document.getElementsByClassName('space')[0].offsetTop
-        const heightSpace = document.getElementsByClassName('space')[0].offsetHeight
-
-        const player1Vert = 1 - (this.players[0].vert +1)*0.5
-        const player2Vert = 1 - (this.players[1].vert +1)*0.5
-
-        document.getElementById(this.players[0]._id).style.top = topSpace + heightSpace*player1Vert - player1Height*player1Vert +'px'
-        document.getElementById(this.players[1]._id).style.top = topSpace + heightSpace*player2Vert - player2Height*player2Vert +'px'
-      })
-    },
 
     // ATTACK METHODS
     checkHit (turn) {
@@ -332,9 +349,8 @@ export default {
           hitAbsolute[i][index] = turn[i].action.card.hit[key]
         })
       }
-      console.log(hitAbsolute)
+
       // Check if attack lands
-      console.log(turn[0].action.card.target[vertical[this.players[1].vert]])
       if (hitAbsolute[0][this.players[1].pos]) {
         if (turn[0].action.card.target[vertical[this.players[1].vert]]) {
           playersHit[1] = true
@@ -345,8 +361,8 @@ export default {
           playersHit[0] = true
         }
       }
-
       console.log(playersHit)
+
       // Check for block/unblockable
       if (playersHit[0] || playersHit[1]) {
         if (playersHit[0] && turn[0].action.card.passive.block) {
@@ -406,8 +422,14 @@ export default {
       return playersHit
     },
     activeEffects (turn, i) {
+      console.log("active effects")
+      console.log(this.players[0].vert, this.players[1].vert)
+
       const opp = i == 0 ? 1 : 0
-      this.player[i].health -= turn[opp].action.cards.active.damage
+      this.players[i].health -= turn[opp].action.card.active.damage
+      this.players[i].pos -= turn[opp].action.card.active.displace.lateral * this.getMoveDir(opp)*-1
+      this.players[i].vert = turn[opp].action.card.active.displace.vertical 
+
     }
   },
 
@@ -416,12 +438,15 @@ export default {
     this.room = (await GameService.getRoom(this.$route.params.room)).data
     this.stage = (await GameService.getStage(this.room.stage)).data
 
-    for (var i=1; i < (this.stage.size*2) - 1; i++) {
+    for (var i=0; i < (this.stage.size*2); i++) {
       if (i== (this.stage.size - this.stage.neutral_pos) || i == this.stage.size + this.stage.neutral_pos -1) {
-        this.boardSpaces.push('N');
+        this.boardSpaces.push('N')
+      }
+      else if (i==0 || i == (this.stage.size*2) -1 ) {
+        this.boardSpaces.push('W')
       }
       else {
-        this.boardSpaces.push('');
+        this.boardSpaces.push('')
       }
     }
 
@@ -440,28 +465,14 @@ export default {
 
     this.players[0].cards =(await GameService.getCharacter('605b1170d37af9220cc6b418')).data.cards
     this.players[1].cards =(await GameService.getCharacter('605b1170d37af9220cc6b418')).data.cards
+
+    this.refresh()
   },
 
-  mounted () {
-    window.addEventListener('resize', this.onResize)
+  async mounted () {
   },
 
   updated () {
-    const player1Height = document.getElementById(this.players[0]._id).offsetHeight
-    const player2Height = document.getElementById(this.players[0]._id).offsetHeight
-
-    const leftNeutral = document.getElementsByClassName('N')[0].offsetLeft
-    const rightNeutral = document.getElementsByClassName('N')[1].offsetLeft
-    const topNeutral = document.getElementsByClassName('N')[0].offsetTop
-    const heightNeutral = document.getElementsByClassName('N')[0].offsetHeight
-
-    const player1Vert = 1 - (this.players[0].vert +1)*0.5
-    const player2Vert = 1 - (this.players[1].vert +1)*0.5
-
-    document.getElementById(this.players[0]._id).style.left = leftNeutral+'px'
-    document.getElementById(this.players[0]._id).style.top = topNeutral + heightNeutral*player1Vert - player1Height*player1Vert +'px'
-    document.getElementById(this.players[1]._id).style.left = rightNeutral+'px'
-    document.getElementById(this.players[1]._id).style.top = topNeutral + heightNeutral*player2Vert - player2Height*player2Vert +'px'
   },
 
   watch: {
@@ -477,17 +488,12 @@ export default {
     width: 100%;
     height: 100%;
   }
-  .player1 {
+  .player {
     position: absolute;
     width: 10%;
     text-align: center;
-    left: 277px;
-  }
-  .player2 {
-    position: absolute;
-    width: 10%;
-    text-align: center;
-    left: 277px;
+    left: 0px;
+    transition: left 0.8s, top 0.3s;
   }
   .spaces-container {
     display: flex;

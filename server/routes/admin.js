@@ -47,6 +47,18 @@ router.post('/characters/:character_id/:card_id', async (req, res) => {
   }
 });
 
+router.get('/cards/name/:card_name', async (req, res) => {
+  try {
+    console.log(req.params.card_name)
+    const card = await Card.findOne({name: req.params.card_name})
+    res.status(201).send(card);
+    
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
+});
+
 router.get('/characters/addCards/:character_id', async (req, res) => {
   try {
     const character = await Character.findOne({_id: req.params.character_id});
@@ -119,6 +131,25 @@ router.delete('/characters/:id', async (req, res) => {
 //Cards
 router.post('/cards', async (req, res) => {
   create(Card, req, res)
+});
+router.post('/cards/:id', async (req, res) => {
+  try {
+    const card = await Card.findOneAndUpdate(
+      {_id: req.params.id},
+      req.body,
+      {
+        new: true,
+        overwrite: true,
+        useFindAndModify: true
+      });
+    res.status(201).send(card)
+    //card.save (req.body)
+    //   .then(card => res.status(201).send(card))
+    
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
 });
 router.get('/cards', async (req, res) => {
   getAll(Card, req, res)
