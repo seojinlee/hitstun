@@ -147,9 +147,8 @@ export default {
         this.waitMsg = 'Waiting for ' + usernamesStr + '...'
       }
     },
-    async createGame({roomName, players, stage}) {
-        const gameData = {roomName, players, stage}
-        await LobbyService.createGame(gameData)
+    async createGame(data) {
+        await LobbyService.createGame(data)
         this.$socket.emit('startGame')
     },
     startGame() {

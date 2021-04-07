@@ -7,12 +7,15 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   strict: true,
   plugins: [
-    createPersistedState()
+    createPersistedState({
+      paths: ['user', 'token', 'isUserLoggedIn']
+    })
   ],
   state: {
     token: null,
     user: null,
-    isUserLoggedIn: false
+    isUserLoggedIn: false,
+    player: null
   },
   mutations: {
     setToken (state, token) {
@@ -32,6 +35,9 @@ export default new Vuex.Store({
       } else {
         state.isUserLoggedIn = false
       }
+    },
+    setPlayer (state, player) {
+      state.player = player
     }
   },
   actions: {
@@ -40,6 +46,9 @@ export default new Vuex.Store({
     },
     setUser ({commit}, user) {
       commit('setUser', user)
+    },
+    setPlayer ({commit}, player) {
+      commit('setPlayer', player)
     }
   }
 })

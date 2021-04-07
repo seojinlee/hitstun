@@ -41,9 +41,20 @@ router.get('/room/:name', async (req, res) => {
     const room = await Room
       .findOne({room: roomName})
       .populate({
-        path:' players',
-        populate: 'character'
-      });
+        path: 'players',
+        populate: {
+          path: 'p1',
+          populate: 'character'
+        },
+      })
+      .populate({
+        path: 'players',
+        populate: {
+          path: 'p2',
+          populate: 'character'
+        },
+      }).
+      populate('stage');
     res.send(room);
   } catch (err) {
     console.log(err)

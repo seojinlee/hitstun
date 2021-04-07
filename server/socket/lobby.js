@@ -1,21 +1,21 @@
 //const players = [];
 
-players = [
+const players = [
   {
-    id: "6063df72c2c6713f68c32611",
+    socket_id: "6063df72c2c6713f68c32611",
     username: 'jim',
     room: 'default_room',
     playing: true,
     character: "605b11ddd37af9220cc6b41b",
-    num: 0
+    key: 'p1'
   },
   {
-    id: "6063df72c2c6713f68c32612",
+    socket_id: "6063df72c2c6713f68c32612",
     username: 'seojin',
     room: 'default_room',
     playing: true,
     character: "605b11ddd37af9220cc6b41b",
-    num: 1
+    key: 'p2'
   }
 ]
 const colors = [
@@ -32,12 +32,15 @@ function playerJoin(id, username, room) {
   const index = players.findIndex(player => player.id === id);
 
   if (index <0) {
-    player = { id, username, room };
-    player.playing = false;
-    player.character = '';
-    player.num = null;
-    player.ready = false;
-    player.color = colors[0];
+    player = {
+      socket_id: id,
+      username: username,
+      room: room,
+      playing: false,
+      character: '',
+      ready: false,
+      color: colors[0]
+    };
 
     colors.push(colors.splice(0, 1)[0]);
     players.push(player);
@@ -61,7 +64,7 @@ function playerUpdate(id, playing, character) {
 // Get current player
 function getCurrentPlayer(id) {
   //return players.find(player => player.id === id); //dev-change
-  return players.find(player => player.username === id)
+  return players.find(player => player.socket_id === id);
 }
 
 // Player leaves chat

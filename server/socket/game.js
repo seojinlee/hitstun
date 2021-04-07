@@ -1,30 +1,34 @@
 const games = [{
   room: 'default_room',
-  turns: [[]]
+  players: {
+    p1: {},
+    p2: {}
+  },
+  data: [{
+  }],
+  stage: ''
 }];
 
 function createGame (roomName) {
   const room = {
-    room: roomName,
-    turns: [[]]
+    room: roomName
   };
   games.push(room);
 }
 
-function addTurn (roomName, action, playerNum) {
+function addTurn (roomName, key, action, playerState) {
+  const player = key == 'p1' ? 'p1' : 'p2';
   const index = games.findIndex(game => game.room === roomName);
-  games[index].turns[games[index].turns.length-1].push ({
-    player: playerNum,
+  games[index].data[games[index].data.length-1][player] = {
+    playerState: playerState,
     action: action
-  });
+  };
   return games[index];
 }
 
 function nextTurn (roomName) {
   const index = games.findIndex(game => game.room === roomName);
-  if (games[index].turns[games[index].turns.length-1].length > 1) {
-    games[index].turns.push([]);
-  }
+  games[index].data.push({});
 }
 
 module.exports = {

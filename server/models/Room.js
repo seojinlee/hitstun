@@ -7,24 +7,38 @@ const roomSchema = new mongoose.Schema({
     unique: true,
     default: "default_room"
   },
-  players: [{
-    id: String,
-    username: String,
-    room: String,
-    playing: Boolean,
-    character: {type: Schema.Types.ObjectId, ref: 'Character'},
-    num: Number,
-    ready: String,
-    color: String
-  }],
-  turn: [{
-    player1: {
-      card: {type: Schema.Types.ObjectId, ref: 'Card'},
-      supermove: Number
+  players: {
+    p1: {
+      socket_id: String,
+      username: String,
+      room: String,
+      character: {type: Schema.Types.ObjectId, ref: 'Character'},
+      num: Number
     },
-    player2: {
-      card: {type: Schema.Types.ObjectId, ref: 'Card'},
-      supermove: Number
+    p2: {
+      socket_id: String,
+      username: String,
+      room: String,
+      character: {type: Schema.Types.ObjectId, ref: 'Character'},
+      num: Number
+    }
+  },
+  data: [{
+    p1: {
+      playerState: {},
+      action: {
+        card: {},
+        supermove: {type: Number, default: 0},
+        burst: {type: Boolean, default: false}
+      }
+    },
+    p2: {
+      playerState: {},
+      action: {
+        card: {},
+        supermove: {type: Number, default: 0},
+        burst: {type: Boolean, default: false}
+      }
     }
   }],
   stage: {type: Schema.Types.ObjectId, ref: 'Stage'}

@@ -3,7 +3,7 @@
     <div class="content">
       <div class="cards-container">
         <div class="card-p"
-          v-for="card in activeCards"
+          v-for="card in cards"
           :key=card._id
           @click="playCard(card._id)">
           <span class="card-text">{{card.name}}</span>
@@ -15,15 +15,16 @@
 </template>
 
 <script>
-import GameService from '@/services/GameService'
+//import GameService from '@/services/GameService'
 
 export default {
+  name: 'Cards',
+  props: ['player', 'cards'],
+
   data () {
     return {
-      player: {},
       name: '', //dev-change
       character: {},
-      cards: [],
       activeCards: [],
       supermove: 0,
       burst: false,
@@ -39,7 +40,11 @@ export default {
         supermove: this.supermove,
         burst: this.burst
       }
-      this.$socket.emit('turnReady', {action, name: this.name})
+      this.$socket.emit('turnReady', {
+        action: action,
+        id: this.player.socket_id,
+        playerState: {}
+      })
     }
   },
   sockets: {
@@ -47,14 +52,16 @@ export default {
       // this.player = player
       // console.log("player: ", this.player)
       // this.character = (await GameService.getCharacter(this.player.character)).data
-      this.character = (await GameService.getCharacter('605b11ddd37af9220cc6b41b')).data
-      this.cards = this.character.cards
-      this.activeCards = this.cards
+      // this.character = (await GameService.getCharacter('605b11ddd37af9220cc6b41b')).data
+      // this.cards = this.character.cards
+      // this.activeCards = this.cards
     }
   },
-  async created () {
+  watch: {
+  },
+  created () {
     this.name = this.$store.state.user
-    this.$socket.emit('loadGame', this.name)
+    console.log(this.name)
   }
 }
 </script>

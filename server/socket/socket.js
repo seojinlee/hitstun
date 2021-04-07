@@ -65,10 +65,19 @@ module.exports = (io) => {
       const {startGame, playersNotReady} = ready(socket.id, player.room);
       const players = getRoomUsers(player.room);
 
+      const playersPlaying = players.find(player => player.playing == true);
+
+      const player1 = playersPlaying[0];
+      const player2 = playersPlaying[1];
+
       if (startGame) {
         socket.emit('createGame', {
-          roomName: player.room,
-          players: players,
+          room: player.room,
+          players: {
+            p1: player1,
+            p2: player2
+          },
+          data: {},
           stage: stage
         });
       }
@@ -95,24 +104,21 @@ module.exports = (io) => {
       socket.emit('loadGame');
     })
 
-    socket.on('turnReady', ({action, name}) => {
+    socket.on('turnReady', (data) => {
+      const action = data.action;
+      const id = data.id;
+      const playerState = data.playerState;
+
       //player = getCurrentPlayer(socket.id); dev-change
-      player = getCurrentPlayer(name)
-      game = addTurn(player.room, action, player.num);
-      console.log(game)
-      if (game.turns[game.turns.length-1].length > 1) {
+      const player = getCurrentPlayer(id)
+      const game = addTurn(player.room, player.key, action, playerState);
+      console.log(game.data[game.data.length-1])
+      if (!!(game.data[game.data.length-1].p1) && !!(game.data[game.data.length-1].p2)) {
         //io.to(player.room).emit('turn', game); dev-change
         io.emit('turn', game)
-
+        nextTurn(player.room);
       }
     })
-
-    socket.on('nextTurn', (name) => {
-      //player = getCurrentPlayer(socket.id); dev-change
-      player = getCurrentPlayer(name)
-      nextTurn(player.room);
-    })
-
 
 
 
