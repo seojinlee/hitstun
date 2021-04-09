@@ -7,19 +7,28 @@
 
           <div class="cooldown-row left">
             <div class="cooldown c-1">
-              <b-tag class="card-tag is-dark ">
-                Front Step
+              <b-tag class="card-tag is-dark"
+                v-for="card in p1_c1" :key="'p1_'+card.name">
+                {{card.name}}
               </b-tag>
             </div>
-            <div class="cooldown c-2"></div>
-            <div class="cooldown c-3"></div>
-            <div class="cooldown c-4">
-              <b-tag class="card-tag is-dark">
-                Front Step
+            <div class="cooldown c-2">
+              <b-tag class="card-tag is-dark"
+                v-for="card in p1_c2" :key="'p1_'+card.name">
+                {{card.name}}
               </b-tag>
-              <div class="card-tag is-dark">
-                Dash Attack Updated
-              </div>
+            </div>
+            <div class="cooldown c-3">
+              <b-tag class="card-tag is-dark"
+                v-for="card in p1_c3" :key="'p1_'+card.name">
+                {{card.name}}
+              </b-tag>
+            </div>
+            <div class="cooldown c-4">
+              <b-tag class="card-tag is-dark"
+                v-for="card in p1_c4" :key="'p1_'+card.name">
+                {{card.name}}
+              </b-tag>
             </div>
           </div>
 
@@ -40,19 +49,28 @@
 
           <div class="cooldown-row right">
             <div class="cooldown c-4">
-              <b-tag class="card-tag is-dark ">
-                Front Step
+              <b-tag class="card-tag is-dark"
+                v-for="card in p2_c4" :key="'p2_'+card.name">
+                {{card.name}}
               </b-tag>
             </div>
-            <div class="cooldown c-3"></div>
-            <div class="cooldown c-2"></div>
-            <div class="cooldown c-1">
-              <b-tag class="card-tag is-dark">
-                Front Step
+            <div class="cooldown c-3">
+              <b-tag class="card-tag is-dark"
+                v-for="card in p2_c3" :key="'p2_'+card.name">
+                {{card.name}}
               </b-tag>
-              <div class="card-tag is-dark">
-                Dash Attack Updated
-              </div>
+            </div>
+            <div class="cooldown c-2">
+              <b-tag class="card-tag is-dark"
+                v-for="card in p2_c2" :key="'p2_'+card.name">
+                {{card.name}}
+              </b-tag>
+            </div>
+            <div class="cooldown c-1">
+              <b-tag class="card-tag is-dark"
+                v-for="card in p2_c1" :key="'p2_'+card.name">
+                {{card.name}}
+              </b-tag>
             </div>
           </div>
 
@@ -71,6 +89,98 @@
 
   </section>
 </template>
+
+<script>
+export default {
+  name: 'Cooldowns',
+  props: ['players'],
+
+  data () {
+    return {
+    }
+  },
+  computed: {
+    p1_c4 () {
+      const c = []
+      this.players[0].cooldowns.forEach(card => {
+        if (card.cooldown == 4) {
+          c.push(card)
+        }
+      })
+      return c
+
+    },
+    p1_c3 () {
+      const c = []
+      this.players[0].cooldowns.forEach(card => {
+        if (card.cooldown == 3) {
+          c.push(card)
+        }
+      })
+      return c
+
+    },
+    p1_c2 () {
+      const c = []
+      this.players[0].cooldowns.forEach(card => {
+        if (card.cooldown == 2) {
+          c.push(card)
+        }
+      })
+      return c
+    },
+    p1_c1 () {
+      const c = []
+      this.players[0].cooldowns.forEach(card => {
+        if (card.cooldown == 1) {
+          c.push(card)
+        }
+      })
+      return c
+    },
+
+    p2_c4 () {
+      const c = []
+      this.players[1].cooldowns.forEach(card => {
+        if (card.cooldown == 4) {
+          c.push(card)
+        }
+      })
+      return c
+
+    },
+    p2_c3 () {
+      const c = []
+      this.players[1].cooldowns.forEach(card => {
+        if (card.cooldown == 3) {
+          c.push(card)
+        }
+      })
+      return c
+
+    },
+    p2_c2 () {
+      const c = []
+      this.players[1].cooldowns.forEach(card => {
+        if (card.cooldown == 2) {
+          c.push(card)
+        }
+      })
+      return c
+    },
+    p2_c1 () {
+      const c = []
+      this.players[1].cooldowns.forEach(card => {
+        if (card.cooldown == 1) {
+          c.push(card)
+        }
+      })
+      return c
+    }
+  }
+}
+</script>
+
 
 <style scoped>
   .cooldowns {

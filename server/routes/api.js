@@ -53,6 +53,26 @@ router.get('/room/:name', async (req, res) => {
           path: 'p2',
           populate: 'character'
         },
+      })
+      .populate({
+        path: 'players',
+        populate: {
+          path: 'p1',
+          populate: {
+            path: 'character',
+            populate: 'cards'
+          }
+        },
+      })
+      .populate({
+        path: 'players',
+        populate: {
+          path: 'p2',
+          populate: {
+            path: 'character',
+            populate: 'cards'
+          }
+        },
       }).
       populate('stage');
     res.send(room);

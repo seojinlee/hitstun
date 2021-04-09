@@ -33,12 +33,12 @@
     
         <div class="container">
           <div class="players-container">
-            <div :id="players[0]._id" class="player player1" ref="player1" :style="playerStyles[0]">
-              {{players[0].username}}
+            <div :id="player1Info._id" class="player player1" ref="player1" :style="playerStyles[0]">
+              {{player1Info.username}}
             </div>
     
-            <div :id="players[1]._id" class="player player2" ref="player2" :style="playerStyles[1]">
-              {{players[1].username}}
+            <div :id="player2Info._id" class="player player2" ref="player2" :style="playerStyles[1]">
+              {{player2Info.username}}
             </div>
           </div>
     
@@ -64,7 +64,7 @@
 
 export default {
   name: 'Board',
-  props: ['player1', 'player2', 'stage'],
+  props: ['player1Info', 'player2Info', 'playersUpdate', 'stage'],
 
   data () {
     return {
@@ -77,6 +77,7 @@ export default {
           pos: null,
           vert: 0,
           cards: [],
+          cooldown: [],
           health: 15,
           burst: true,
           supercharge: 0,
@@ -90,6 +91,7 @@ export default {
           pos: null,
           vert: 0,
           cards: [],
+          cooldown: [],
           health: 15,
           burst: true,
           supercharge: 0,
@@ -111,27 +113,35 @@ export default {
     }
   },
   sockets: {
-    turn (game) {
-      console.log(game)
-      console.log(this.players)
+    async turn (game) {
+      console.log('game: ', game)
+      console.log('players: ', this.players)
       // Play cards
       const turn = this.parseTurn(game.data[game.data.length-1])
       // Movement
       const newPos = this.getPos(turn)
+      console.log('movement: ', newPos)
       this.players[0].pos = newPos[0]
-      this.players[0].vert = turn[0].player == 0 ? turn[0].action.card.movement.vertical : turn[1].action.card.movement.vertical
+      this.players[0].vert = turn[0].action.card.movement.vertical
       this.players[1].pos = newPos[1]
-      this.players[1].vert = turn[0].player == 1 ? turn[0].action.card.movement.vertical : turn[1].action.card.movement.vertical
-      this.refresh()
+      this.players[1].vert = turn[1].action.card.movement.vertical
+
+      await this.refresh()
+      console.log('attack phase')
       //Attack
       this.players[0].supercharge += turn[0].action.card.passive.supercharge
       this.players[1].supercharge += turn[1].action.card.passive.supercharge
       const playersHit = this.checkHit(turn)
+
+      console.log('playersHit: ', playersHit)
+
+
       for (let i=0; i<2; i++) {
-        if (playersHit[i]) this.activeEffects(turn, i)
+        if (playersHit[i]) await this.activeEffects(turn, i)
       }
-      console.log(playersHit)
-      console.log('players: ', this.players)
+
+      console.log('manage cards phase')
+      this.manageCards(turn)
       
     }
   },
@@ -141,38 +151,63 @@ export default {
     },
     // BOARD CHANGES 
     refresh () {
-      const refs = this.$refs
-      const player1_pos = refs[this.players[0].pos][0].offsetLeft
-      const player2_pos = refs[this.players[1].pos][0].offsetLeft
-      const player1Height = this.$refs.player1.offsetHeight
-      const player2Height = this.$refs.player2.offsetHeight
-      const topSpace = refs[1][0].offsetTop
-      const heightSpace = refs[1][0].offsetHeight
-      const player1Vert = 1 - (this.players[0].vert +1)*0.5
-      const player2Vert = 1 - (this.players[1].vert +1)*0.5
-      this.playerStyles[0].left = player1_pos+'px'
-      this.playerStyles[1].left = player2_pos+'px'
-      this.playerStyles[0].top = topSpace + heightSpace*player1Vert - player1Height*player1Vert +'px'
-      this.playerStyles[1].top = topSpace + heightSpace*player2Vert - player2Height*player2Vert +'px'
-    },
-    async animate () {
-      const refs = this.$refs
-      const player1_pos = refs[this.players[0].pos][0].offsetLeft
-      const player2_pos = refs[this.players[1].pos][0].offsetLeft
-      const player1diff = player1_pos - parseInt(this.playerStyles[0].left)
-      const player2diff = player2_pos - parseInt(this.playerStyles[1].left)
-      for (let i=0; i<=Math.max(Math.abs(player1diff), Math.abs(player2diff)); i++) {
-        if (i<= Math.abs(player1diff) ) {
-          this.playerStyles[0].left = (parseInt(this.playerStyles[0].left) +1*Math.sign(player1diff)) +'px'
+      return new Promise (resolve => {
+        const refs = this.$refs
+        const player1_pos = refs[this.players[0].pos][0].offsetLeft
+        const player2_pos = refs[this.players[1].pos][0].offsetLeft
+        const player1Height = this.$refs.player1.offsetHeight
+        const player2Height = this.$refs.player2.offsetHeight
+        const topSpace = refs[1][0].offsetTop
+        const heightSpace = refs[1][0].offsetHeight
+        const player1Vert = 1 - (this.players[0].vert +1)*0.5
+        const player2Vert = 1 - (this.players[1].vert +1)*0.5
+
+        const player1_vert = topSpace + heightSpace*player1Vert - player1Height*player1Vert
+        const player2_vert = topSpace + heightSpace*player2Vert - player2Height*player2Vert
+
+        var leftTransition = true
+        var topTransition = true
+
+        if (parseInt(this.playerStyles[0].left) == parseInt(player1_pos) && parseInt(this.playerStyles[1].left) == parseInt(player2_pos)) leftTransition = false
+        if (parseInt(this.playerStyles[0].top) == parseInt(player1_vert) && parseInt(this.playerStyles[1].top) == parseInt(player2_vert)) topTransition = false
+
+        this.playerStyles[0].left = player1_pos+'px'
+        this.playerStyles[1].left = player2_pos+'px'
+        this.playerStyles[0].top = topSpace + heightSpace*player1Vert - player1Height*player1Vert +'px'
+        this.playerStyles[1].top = topSpace + heightSpace*player2Vert - player2Height*player2Vert +'px'
+
+        if (leftTransition || topTransition) {
+          const transitionEnded = e => {
+            if (e.propertyName !== 'left' && e.propertyName !== 'top') return;
+              this.$refs.player1.removeEventListener('transitionend', transitionEnded);
+              this.$refs.player2.removeEventListener('transitionend', transitionEnded);
+              resolve();
+            }
+          this.$refs.player1.addEventListener('transitionend', transitionEnded);
+          this.$refs.player2.addEventListener('transitionend', transitionEnded);
         }
-        if (i<= Math.abs(player2diff) ) {
-          this.playerStyles[1].left = (parseInt(this.playerStyles[1].left) +1*Math.sign(player2diff)) +'px'
+        else {
+          resolve()
         }
-        await this.sleep(3)
-      }
+      })
       
-      // this.playerStyles[0].left = player1_pos+'px'
-      // this.playerStyles[1].left = player2_pos+'px'
+    },
+    async damageShake (p) {
+      const player = p == 0 ? 'player1' : 'player2'
+      console.log('damage shake: ', player)
+      const playerLeft = parseInt(this.playerStyles[p].left)
+
+      const interval = 60
+      const distance = 8
+      const times = 3
+
+      for (var i = 0; i < (times + 1); i++) {
+        this.$refs[player].animate({
+          left: (playerLeft + (i % 2 == 0 ? distance : distance * -1)) + 'px'
+        }, interval);
+        await this.sleep(60)
+      }
+
     },
     //
     parseTurn (turn) {
@@ -269,7 +304,6 @@ export default {
           // If no collision, move as normal
           else {
             for (let i=0; i<2; i++) {
-              console.log('no collision')
               new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
             }
           }
@@ -316,7 +350,7 @@ export default {
           playersHit[0] = true
         }
       }
-      console.log(playersHit)
+
       // Check for block/unblockable
       if (playersHit[0] || playersHit[1]) {
         if (playersHit[0] && turn[0].action.card.passive.block) {
@@ -372,37 +406,79 @@ export default {
       }
       return playersHit
     },
-    activeEffects (turn, i) {
+    async activeEffects (turn, i) {
       console.log("active effects")
-      console.log(this.players[0].vert, this.players[1].vert)
+
       const opp = i == 0 ? 1 : 0
       this.players[i].health -= turn[opp].action.card.active.damage
+
+      await this.damageShake(i)
+
       this.players[i].pos -= turn[opp].action.card.active.displace.lateral * this.getMoveDir(opp)*-1
-      this.players[i].vert = turn[opp].action.card.active.displace.vertical 
+      this.players[i].vert = turn[opp].action.card.active.displace.vertical
+      this.players[i].state.bind = turn[opp].action.card.active.bind
+      this.players[i].state.hitstun = turn[opp].action.card.active.hitstun
+    },
+    async manageCards (turn) {
+      const playerState = {
+        p1: {},
+        p2: {},
+        id: this.name //dev-change
+      }
+
+      for (let i=0; i<2; i++) {
+        const player = i==0 ? 'p1' : 'p2'
+        const cardIndex = this.players[i].cards.findIndex(card => card._id == turn[i].action.card._id)
+        const cooldown = this.players[i].cards.splice(cardIndex, 1)[0]
+
+        // this.players[i].cooldown.forEach(card => {
+        //   card.cooldown -= 1
+        //   if (card.cooldown < 1) {
+        //     this.players[i].cards.push(card)
+        //   }
+        // })
+
+        this.players[i].cooldown.push(cooldown)
+
+        playerState[player] = this.players[i]
+      }
+      console.log('playerState: ', playerState)
+
+      playerState.p1.vert = 0
+      playerState.p2.vert = 0
+
+      await this.sleep(800)
+
+      this.$emit('playerState', playerState)
+
+      
+
+      //this.$store.dispatch('playerState', playerState)
     }
   },
 
   async mounted () {
     this.name = this.$store.state.user // dev-change
+
+    while (!this.$refs[0] || !this.players || !this.stage) {
+      await this.sleep(50)
+    }
+    this.refresh()
   },
 
   updated () {
   },
 
   watch: {
-    player1 () {
-      this.players[0]._id = this.player1._id
-      this.players[0].username = this.player1.username
+    async playersUpdate () {
+      this.players[0] = this.playersUpdate.p1
+      this.players[1] = this.playersUpdate.p2
 
-      this.players[0].character = this.player1.character
-      this.players[0].cards = this.player1.character.cards
-    },
-    player2 () {
-      this.players[1]._id = this.player2._id
-      this.players[1].username = this.player2.username
-
-      this.players[1].character = this.player2.character
-      this.players[1].cards = this.player2.character.cards
+      console.log('playersUpdate', this.playersUpdate)
+      while (!this.$refs[0] || !this.players || !this.stage) {
+        await this.sleep(50)
+      }
+      await this.refresh()
     },
     async stage () {
       for (var i=0; i < (this.stage.size*2); i++) {
@@ -419,10 +495,6 @@ export default {
       this.players[0].pos = this.stage.size - this.stage.neutral_pos
       this.players[1].pos = this.stage.size + this.stage.neutral_pos -1
 
-      while (!this.$refs[0]) {
-        await this.sleep(100)
-      }
-      this.refresh()
     }
   }
 }
@@ -441,7 +513,7 @@ export default {
     width: 10%;
     text-align: center;
     left: 50%;
-    transition: left 0.8s, top 0.3s;
+    transition: left 0.6s, top 0.3s, font-size 0.3s;
   }
   .spaces-container {
     display: flex;

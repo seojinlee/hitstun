@@ -64,7 +64,7 @@ function playerUpdate(id, playing, character) {
 // Get current player
 function getCurrentPlayer(id) {
   //return players.find(player => player.id === id); //dev-change
-  return players.find(player => player.socket_id === id);
+  return players.find(player => player.username === id);
 }
 
 // Player leaves chat

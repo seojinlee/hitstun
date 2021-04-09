@@ -1,0 +1,54 @@
+{
+  "room": "default_room",
+  "players": {
+    "p1": {
+      "socket_id": "6063df72c2c6713f68c32611",
+      "username": "jim",
+      "room": "default_room",
+      "character": "605b11ddd37af9220cc6b41b"
+    },
+    "p2": {
+      "socket_id": "6063df72c2c6713f68c32612",
+      "username": "seojin",
+      "room": "default_room",
+      "character": "605b11ddd37af9220cc6b41b"
+    }
+  },
+  "data": [{
+    "p1": {
+      "playerState": {
+        "username": "",
+        "pos": null,
+        "vert": 0,
+        "cards": [],
+        "cooldowns": [],
+        "health": 15,
+        "burst": true,
+        "supercharge": 0,
+        "state": {
+          "hitstun": false,
+          "bind": false
+        }
+      },
+      "action": {}
+    },
+    "p2": {
+      "playerState": {
+        "username": "",
+        "pos": null,
+        "vert": 0,
+        "cards": [],
+        "cooldowns": [],
+        "health": 15,
+        "burst": true,
+        "supercharge": 0,
+        "state": {
+          "hitstun": false,
+          "bind": false
+        }
+      },
+      "action": {}
+    }
+  }],
+  "stage": "605b131ed37af9220cc6b41d"
+}

@@ -42,7 +42,7 @@ export default {
       }
       this.$socket.emit('turnReady', {
         action: action,
-        id: this.player.socket_id,
+        id: this.name,
         playerState: {}
       })
     }

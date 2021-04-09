@@ -11,7 +11,8 @@ module.exports = (io) => {
   const {
     createGame,
     addTurn,
-    nextTurn
+    nextTurn,
+    updatePlayerState
   } = require('./game');
 
   io.on('connection', socket => {
@@ -112,12 +113,23 @@ module.exports = (io) => {
       //player = getCurrentPlayer(socket.id); dev-change
       const player = getCurrentPlayer(id)
       const game = addTurn(player.room, player.key, action, playerState);
-      console.log(game.data[game.data.length-1])
-      if (!!(game.data[game.data.length-1].p1) && !!(game.data[game.data.length-1].p2)) {
+
+      if (!!(game.data[game.data.length-1].p1.action.card) && !!(game.data[game.data.length-1].p2.action.card)) {
         //io.to(player.room).emit('turn', game); dev-change
         io.emit('turn', game)
         nextTurn(player.room);
       }
+    })
+
+    socket.on('playerState', (playerState) => {
+      console.log('updatePlayerState')
+      const id = playerState.id; // dev-change
+      console.log(id)
+      const player = getCurrentPlayer(id)
+      const game = updatePlayerState(player.room, playerState)
+      console.log(game)
+
+      socket.emit('update', game)
     })
 
 
