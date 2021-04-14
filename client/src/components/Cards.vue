@@ -1,15 +1,29 @@
 <template>
   <section class="cards">
-    <div class="content">
-      <div class="cards-container">
-        <div class="card-p"
-          v-for="card in cards"
-          :key=card._id
-          @click="playCard(card._id)">
-          <span class="card-text">{{card.name}}</span>
-          <img src="../assets/card_template.png">
+    <div class="cards-container" :class="{super: isSuper}"
+      v-if="!playerState.state.hitstun">
+
+      <div class="columns">
+        
+        <div class="cloumn is-3 buttons" >
+          <b-field>
+            <b-button type="is-danger" expanded :disabled="isSuper">Burst</b-button>
+            <b-button type="is-warning" expanded>Super</b-button>
+          </b-field>
         </div>
+
+        <div class="column cards">
+          <div class="card-p" 
+            v-for="card in cards"
+            :key=card._id
+            @click="playCard(card._id)">
+            <span class="card-text">{{card.name}}</span>
+            <img src="../assets/card_template.png">
+          </div>
+        </div>
+
       </div>
+
     </div>
   </section>
 </template>
@@ -19,16 +33,29 @@
 
 export default {
   name: 'Cards',
-  props: ['player', 'cards'],
+  props: ['playerInfo', 'playerState', 'cards'],
 
   data () {
     return {
       name: '', //dev-change
       character: {},
       activeCards: [],
-      supermove: 0,
+      supercharge: 0,
       burst: false,
-      actions: []
+      actions: [],
+      blankCard: {
+        movement: {
+          lateral: 0,
+          vertical: 0
+        },
+        hit: {},
+        cooldown: -1,
+        supercharge_cost: 0,
+        passive: {
+          supercharge: 0
+        },
+        target: {}
+      },
     }
   },
   methods: {
@@ -42,8 +69,7 @@ export default {
       }
       this.$socket.emit('turnReady', {
         action: action,
-        id: this.name,
-        playerState: {}
+        id: this.name
       })
     }
   },
@@ -58,6 +84,30 @@ export default {
     }
   },
   watch: {
+    playerState () {
+      console.log('cards', this.playerState.state.hitstun)
+      if (this.playerState.state.hitstun) {
+        console.log('socket emit turnready')
+        this.$socket.emit('turnReady', {
+          action: {
+            card: this.blankCard,
+            supermove: false,
+            burst: false
+          },
+          id: this.name,
+        })
+      }
+    }
+  },
+  computed: {
+    isSuper () {
+      if (this.playerState.supercharge >= 3) {
+        return true
+      }
+      else {
+        return false
+      }
+    }
   },
   created () {
     this.name = this.$store.state.user
@@ -70,16 +120,30 @@ export default {
   .cards {
     margin-top: 30px;
   }
+  .content {
+  }
   .cards-container {
+    padding: 0px 80px;
     position: fixed;
+    bottom: 0px;
+    width: 100%;
+    background-color: red;
+  }
+  .super {
+    background-color: yellow;
+  }
+  .buttons {
+  }
+  .cards {
     display: flex;
     justify-content: center;
-    bottom: 0px;
-    left: 0px;
+    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
   }
   .card-p {
     position: relative;
-    width: 11%;
+    width: 100px;
     margin: 2px;
     cursor: pointer;
     align-self: flex-end;

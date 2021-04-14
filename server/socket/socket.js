@@ -106,15 +106,15 @@ module.exports = (io) => {
     })
 
     socket.on('turnReady', (data) => {
+      console.log('turnReady')
       const action = data.action;
       const id = data.id;
-      const playerState = data.playerState;
 
       //player = getCurrentPlayer(socket.id); dev-change
       const player = getCurrentPlayer(id)
-      const game = addTurn(player.room, player.key, action, playerState);
+      const game = addTurn(player.room, player.key, action);
 
-      if (!!(game.data[game.data.length-1].p1.action.card) && !!(game.data[game.data.length-1].p2.action.card)) {
+      if (!!(game.data[game.data.length-1].p1.action) && !!(game.data[game.data.length-1].p2.action)) {
         //io.to(player.room).emit('turn', game); dev-change
         io.emit('turn', game)
         nextTurn(player.room);
@@ -124,12 +124,14 @@ module.exports = (io) => {
     socket.on('playerState', (playerState) => {
       console.log('updatePlayerState')
       const id = playerState.id; // dev-change
+      const currentPlayerState = playerState
       console.log(id)
       const player = getCurrentPlayer(id)
       const game = updatePlayerState(player.room, playerState)
       console.log(game)
 
       socket.emit('update', game)
+      socket.emit('playerState', playerState[playerState.p])
     })
 
 

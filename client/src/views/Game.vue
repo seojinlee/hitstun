@@ -59,7 +59,7 @@
     </section>
 
     <Cooldowns :players='players'/>
-    <Cards :player='player' :cards='cards' />
+    <Cards :playerInfo='playerInfo' :playerState='playerState' :cards='cards' />
 
   </div>
 </template>
@@ -82,7 +82,8 @@ export default {
       name: '', //dev-change
       room: {},
       stage: {},
-      player: {},
+      playerInfo: {},
+      playerState: {health: 15},
       cards: [],
 
       boardSpaces: [],
@@ -144,16 +145,23 @@ export default {
         this.cards = turn.p1.playerState.cards
       }
       else if  (this.room.players.p2.username == this.name) {
-        this.cards =turn.p2.playerState.cards
+        this.cards = turn.p2.playerState.cards
       }
 
       await this.sleep(200)
       await this.refresh()
 
     },
+    playerState (playerState) {
+      console.log('socket playerState', playerState)
+      this.playerState = playerState
+    },
     async turn (game) {
       console.log('game: ', game)
       console.log('players: ', this.players)
+
+      this.players[0].state.hitstun = false
+      this.players[1].state.hitstun = false
 
       // Play cards
       const turn = this.parseTurn(game.data[game.data.length-1])
@@ -174,10 +182,7 @@ export default {
 
       console.log('playersHit: ', playersHit)
 
-
-      for (let i=0; i<2; i++) {
-        if (playersHit[i]) await this.activeEffects(turn, i)
-      }
+      this.activeEffects(turn, playersHit)
 
       console.log('manage cards phase')
       this.manageCards(turn)
@@ -296,8 +301,6 @@ export default {
             this.moveIncrement(0, new_player_pos[0], Math.sign(player_move_count[0])),
             this.moveIncrement(1, new_player_pos[1], Math.sign(player_move_count[1]))
           ]
-          console.log('potentialPos p1', player_move_count[0], this.getMoveDir(0))
-          console.log('potentialPos p2', player_move_count[1], this.getMoveDir(1))
           // If collision occurs, run collision resolution
           if (potentialPos[0] == potentialPos[1] || Math.sign(player_move_count[0]*this.getMoveDir(0)) == Math.sign(player_move_count[1]*this.getMoveDir(1))) {
             // Check if one player is airbourne
@@ -449,35 +452,52 @@ export default {
       }
       return playersHit
     },
-    async activeEffects (turn, i) {
+    async activeEffects (turn, playersHit) {
       console.log("active effects")
 
-      const opp = i == 0 ? 1 : 0
-      this.players[i].health -= turn[opp].action.card.active.damage
+      for (let i=0; i<2; i++) {
+        if (playersHit[i]) {
+          const opp = i == 0 ? 1 : 0
+          this.players[i].health -= turn[opp].action.card.active.damage
 
-      await this.damageShake(i)
+          await this.damageShake(i)
 
-      this.players[i].pos -= turn[opp].action.card.active.displace.lateral * this.getMoveDir(opp)*-1
-      this.players[i].vert = turn[opp].action.card.active.displace.vertical
-      this.players[i].state.bind = turn[opp].action.card.active.bind
-      this.players[i].state.hitstun = turn[opp].action.card.active.hitstun
+          if (playersHit[0] != playersHit[1] || !(turn[i].action.card.tenacity)) {
+              this.players[i].pos -= turn[opp].action.card.active.displace.lateral * this.getMoveDir(opp)*-1
+              this.players[i].vert = turn[opp].action.card.active.displace.vertical
+              this.players[i].state.bind = turn[opp].action.card.active.bind
+              this.players[i].state.hitstun = turn[opp].action.card.active.hitstun
+          }
+        }
+      }
     },
+
     async manageCards (turn) {
       const playerState = {
         p1: {},
         p2: {},
-        id: this.name //dev-change
+        id: this.name, //dev-change
+        p: "" //dev-change
       }
+      const playerCards = [
+        this.room.players.p1.character.cards,
+        this.room.players.p2.character.cards
+      ]
 
       for (let i=0; i<2; i++) {
         const player = i==0 ? 'p1' : 'p2'
         const cardIndex = this.players[i].cards.findIndex(card => card._id == turn[i].action.card._id)
         const cooldowns = this.players[i].cards.splice(cardIndex, 1)[0]
 
-        this.players[i].cooldowns.forEach(card => {
+        this.players[i].cooldowns.forEach((card, index) => {
           card.cooldown -= 1
+          console.log('card off cooldown')
           if (card.cooldown < 1) {
-            this.players[i].cards.push(card)
+            console.log(card._id, playerCards[i])
+            let newCard = playerCards[i].find(c => c._id == card._id)
+            console.log(newCard)
+            this.players[i].cards.push(newCard)
+            this.players[i].cooldowns.splice(index, 1)
           }
         })
 
@@ -485,6 +505,14 @@ export default {
 
         playerState[player] = this.players[i]
       }
+      console.log(this.room.players)
+
+      if (this.room.players.p1.username == this.name) {
+        playerState.p = 'p1'
+      }
+      else if (this.room.players.p2.username == this.name) {
+        playerState.p = 'p2'
+      } //dev-change
       console.log('playerState: ', playerState)
 
       playerState.p1.vert = 0
@@ -503,28 +531,30 @@ export default {
   async mounted () {
     this.name = this.$store.state.user // dev-change
     this.room = (await GameService.getRoom(this.$route.params.room)).data
-    
+
     this.playersInfo = [
       this.room.players.p1,
       this.room.players.p2
       ]
     this.stage = this.room.stage
 
+    console.log(this.players)
+
     this.players[0] = this.room.data[0].p1.playerState,
     this.players[1] = this.room.data[0].p2.playerState
 
-    this.players[0].cards = this.room.players.p1.character.cards
-    this.players[1].cards = this.room.players.p2.character.cards
-    console.log('mounted')
-    console.log(this.playersInfo, this.players)
+    this.players[0].cards = [...this.room.players.p1.character.cards]
+    this.players[1].cards = [...this.room.players.p2.character.cards]
 
     if  (this.room.players.p1.username == this.name) {
       this.cards = this.players[0].cards
-      this.player = this.playersInfo[0]
+      this.playerState = this.players[0]
+      this.playerInfo = this.playersInfo[0]
     }
     else if  (this.room.players.p2.username == this.name) {
-      this.cards = this.players[0].cards
-      this.player = this.playersInfo[1]
+      this.cards = this.players[1].cards
+      this.playerState = this.players[1]
+      this.playerInfo = this.playersInfo[1]
     }
 
     for (var i=0; i < (this.stage.size*2); i++) {

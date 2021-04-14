@@ -37,6 +37,7 @@ router.get('/room', async (req, res) => {
 
 router.get('/room/:name', async (req, res) => {
   try {
+    console.log('fetching room')
     const roomName = req.params.name;
     const room = await Room
       .findOne({room: roomName})

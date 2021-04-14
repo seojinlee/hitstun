@@ -29,8 +29,7 @@ const games = [{
           hitstun: false,
           bind: false
         }
-      },
-      action: {}
+      }
     },
     p2: {
       playerState: {
@@ -46,8 +45,7 @@ const games = [{
           hitstun: false,
           bind: false
         }
-      },
-      action: {}
+      }
     }
   }],
   stage: ''
@@ -86,8 +84,7 @@ function nextTurn (roomName) {
           hitstun: false,
           bind: false
         }
-      },
-      action: {}
+      }
     },
     p2: {
       playerState: {
@@ -103,8 +100,7 @@ function nextTurn (roomName) {
           hitstun: false,
           bind: false
         }
-      },
-      action: {}
+      }
     }
   });
 }
