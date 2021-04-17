@@ -15,6 +15,7 @@ const characterSchema = new mongoose.Schema({
     unique: true
   },
   cards: [{type: Schema.Types.ObjectId, ref: 'Card'}],
+  supercard: {type: Schema.Types.ObjectId, ref: 'Card'},
   version: {
     type: Number,
     required: true

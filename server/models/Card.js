@@ -19,6 +19,11 @@ const cardSchema = new mongoose.Schema({
       required: true,
       default: false
     },
+    block: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
     super: {
       type: Boolean,
       required: true,
@@ -27,10 +32,13 @@ const cardSchema = new mongoose.Schema({
   },
   assoc: {
     type: String,
-    default: "Basic",
     required: true
   },
   photo: String,
+  cooldown: {
+    type: Number,
+    required: true
+  },
   movement: {
     lateral: Number,
     vertical: Number,
@@ -42,23 +50,13 @@ const cardSchema = new mongoose.Schema({
     4: {type: Boolean, default: false},
     5: {type: Boolean, default: false},
     6: {type: Boolean, default: false},
-    7: {type: Boolean, default: false}
+    7: {type: Boolean, default: false},
+    8: {type: Boolean, default: false},
+    9: {type: Boolean, default: false}
   },
   prio: {
     type: Number,
     required: true
-  },
-  cooldown: {
-    type: Number,
-    required: true
-  },
-  crush: {
-    type: Boolean,
-    default: false
-  },
-  timed: {
-    type: Number,
-    default: 0
   },
   supercharge_cost: {
     type: Number,
@@ -74,11 +72,11 @@ const cardSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
-    move_hitstun: {
+    bind: {
       type: Boolean,
       default: false
     },
-    bind: {
+    reposition: {
       type: Boolean,
       default: false
     },
@@ -92,6 +90,10 @@ const cardSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
+    tenacity: {
+      type: Boolean,
+      default: false
+    },
     supercharge: {
       type: Number,
       default: 0
@@ -100,10 +102,6 @@ const cardSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
-  },
-  post: {
-    type: Boolean,
-    default: false
   },
   target: {
     high: {

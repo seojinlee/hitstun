@@ -1,6 +1,7 @@
 const express = require('express');
 const mongodb = require('mongodb');
 const mongoose = require('mongoose');
+const shape = require('shape-json');
 
 const Character = require('../models/Character')
 const Card = require('../models/Card')
@@ -131,6 +132,74 @@ router.delete('/characters/:id', async (req, res) => {
 //Cards
 router.post('/cards', async (req, res) => {
   create(Card, req, res)
+});
+router.post('/cards-batch', async (req, res) => {
+  const cardScheme = {
+    "$mirror(name)": {
+      "name": "name",
+      "type": {
+        "attack": "attack",
+        "move": "move",
+        "super": "super",
+        "block": "block"
+      },
+      "assoc": "assoc",
+      "photo": "photo",
+      "cooldown": "cooldown",
+      "movement": {
+        "lateral": "move_lateral",
+        "vertical": "move_vertical"
+      },
+      "hit": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+      },
+      "prio": "prio",
+      "supercharge_cost": "supercharge_cost",
+      "active": {
+        "damage": "damage",
+        "displace": {
+          "lateral": "effect_lateral",
+          "vertical": "effect_vertical"
+        },
+        "hitstun": "hitstun",
+        "bind": "bind",
+        "reposition": "reposition",
+        "supercharge": "supercharge"
+      },
+      "target": {
+        "high": "high",
+        "mid": "mid",
+        "low": "low"
+      },
+      "passive": {
+        "unblockable": "unblockable",
+        "tenacity": "tenacity",
+        "supercharge": "supercharge",
+        "block": "block"
+      },
+      "version": "version"
+    }
+  }
+
+  try {
+    const jsonArray = shape.parse(req.body, cardScheme)
+    for (let card of jsonArray) {
+      await Card.create(card);
+    }
+
+    res.status(201).send(jsonArray)
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err.errmsg);
+  }
 });
 router.post('/cards/:id', async (req, res) => {
   try {

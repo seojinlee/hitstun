@@ -83,7 +83,7 @@ export default {
       room: {},
       stage: {},
       playerInfo: {},
-      playerState: {health: 15},
+      playerState: {},
       cards: [],
 
       boardSpaces: [],
@@ -151,10 +151,6 @@ export default {
       await this.sleep(200)
       await this.refresh()
 
-    },
-    playerState (playerState) {
-      console.log('socket playerState', playerState)
-      this.playerState = playerState
     },
     async turn (game) {
       console.log('game: ', game)
@@ -507,12 +503,6 @@ export default {
       }
       console.log(this.room.players)
 
-      if (this.room.players.p1.username == this.name) {
-        playerState.p = 'p1'
-      }
-      else if (this.room.players.p2.username == this.name) {
-        playerState.p = 'p2'
-      } //dev-change
       console.log('playerState: ', playerState)
 
       playerState.p1.vert = 0
@@ -521,14 +511,13 @@ export default {
       await this.sleep(800)
 
       this.$socket.emit('playerState', playerState)
-
-      
-
       //this.$store.dispatch('playerState', playerState)
     }
   },
 
   async mounted () {
+    window.addEventListener('resize', this.refresh)
+
     this.name = this.$store.state.user // dev-change
     this.room = (await GameService.getRoom(this.$route.params.room)).data
 
@@ -581,9 +570,15 @@ export default {
   },
 
   watch: {
-    async players () {
-      console.log('players updated')
-      //await this.refresh()
+    async players () { //dev-change
+      if  (this.room.players.p1.username == this.name) {
+        this.cards = this.players[0].cards
+        this.playerState = this.players[0]
+      }
+      else if  (this.room.players.p2.username == this.name) {
+        this.cards = this.players[1].cards
+        this.playerState = this.players[1]
+      }
     }
   }
 }

@@ -6,10 +6,15 @@
       <div class="columns">
         
         <div class="cloumn is-3 buttons" >
-          <b-field>
-            <b-button type="is-danger" expanded :disabled="isSuper">Burst</b-button>
-            <b-button type="is-warning" expanded>Super</b-button>
-          </b-field>
+            <b-button type="is-danger" expanded 
+              :disabled="burstDisable">
+              Burst
+            </b-button>
+            <b-button type="is-warning" expanded 
+              :disabled="superDisable"
+              @click="enable_super">
+              Super
+            </b-button>
         </div>
 
         <div class="column cards">
@@ -25,6 +30,26 @@
       </div>
 
     </div>
+    <b-modal v-model="isModalActive" :width="640" scroll="keep">
+      <div class="modal-card">
+        <div class="modal-card-content">
+          <div class="card-super supermove">
+            <span class="card-text">-1</span>
+            <img src="../assets/Superdashback300px.png">
+          </div>
+          <div class="card-super supermove">
+            <span class="card-text">+1</span>
+            <img src="../assets/card_template.png">
+          </div>
+          <div class="card-super supercard"
+            v-if="playerState.supercharge > 3">
+            <span class="card-text">Super Card</span>
+            <img src="../assets/flare_barrage.png">
+          </div>
+        </div>
+      </div>
+    </b-modal>
+
   </section>
 </template>
 
@@ -41,7 +66,10 @@ export default {
       character: {},
       activeCards: [],
       supercharge: 0,
+      isSuper: false,
       burst: false,
+      burstDisable: false,
+      superDisable: false,
       actions: [],
       blankCard: {
         movement: {
@@ -56,6 +84,7 @@ export default {
         },
         target: {}
       },
+      isModalActive: false,
     }
   },
   methods: {
@@ -71,6 +100,11 @@ export default {
         action: action,
         id: this.name
       })
+    },
+    enable_super () {
+      this.isSuper = true
+      this.superDisable = true
+      this.isModalActive = true
     }
   },
   sockets: {
@@ -97,17 +131,16 @@ export default {
           id: this.name,
         })
       }
+
+      if (this.playerState.supercharge < 3) {
+        this.superDisable = true
+      }
+      else {
+        this.superDisable = false
+      }
     }
   },
   computed: {
-    isSuper () {
-      if (this.playerState.supercharge >= 3) {
-        return true
-      }
-      else {
-        return false
-      }
-    }
   },
   created () {
     this.name = this.$store.state.user
@@ -133,6 +166,7 @@ export default {
     background-color: yellow;
   }
   .buttons {
+    margin-top: auto;
   }
   .cards {
     display: flex;
@@ -150,13 +184,21 @@ export default {
     transition: 0.2s;
   }
   .card-p:hover {
-    width: 13%;
+    width: 120px;
     transition: 0.3s;
   }
   .card-text {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 20%;
+    left: 40%;
+  }
+  .modal-card-content {
+  }
+  .card-super {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    cursor: pointer;
   }
   .img {
     box-shadow: 0 0 0 0;

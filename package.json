@@ -19,6 +19,7 @@
     "material-design-icons": "^3.0.1",
     "mongodb": "^3.6.5",
     "mongoose": "^5.12.1",
+    "shape-json": "^1.2.4",
     "socket.io": "^4.0.0"
   },
   "devDependencies": {

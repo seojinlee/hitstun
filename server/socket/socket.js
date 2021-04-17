@@ -131,7 +131,6 @@ module.exports = (io) => {
       console.log(game)
 
       socket.emit('update', game)
-      socket.emit('playerState', playerState[playerState.p])
     })
 
 
