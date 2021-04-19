@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="game">
     <section class="HUD">
       <div class="content columns">
         <div class="column is-half">
@@ -34,11 +34,11 @@
         <div class="container">
           <div class="players-container">
             <div :id="playersInfo[0].socket_id" class="player player1" ref="player1" :style="playerStyles[0]">
-              {{playersInfo[0].username}}
+              <img :src="characterImageUrl(playersInfo[0].character.character_card)">
             </div>
     
             <div :id="playersInfo[1].socket_id" class="player player2" ref="player2" :style="playerStyles[1]">
-              {{playersInfo[1].username}}
+              <img :src="characterImageUrl(playersInfo[1].character.character_card)">
             </div>
           </div>
     
@@ -59,7 +59,7 @@
     </section>
 
     <Cooldowns :players='players'/>
-    <Cards :playerInfo='playerInfo' :playerState='playerState' :cards='cards' />
+    <Cards :playerInfo='playerInfo' :playerState='playerState' />
 
   </div>
 </template>
@@ -84,7 +84,6 @@ export default {
       stage: {},
       playerInfo: {},
       playerState: {},
-      cards: [],
 
       boardSpaces: [],
       playersInfo: [],
@@ -93,6 +92,7 @@ export default {
           pos: null,
           vert: 0,
           cards: [],
+          superCard: {},
           cooldowns: [],
           health: 15,
           burst: true,
@@ -106,6 +106,7 @@ export default {
           pos: null,
           vert: 0,
           cards: [],
+          superCard: {},
           cooldowns: [],
           health: 15,
           burst: true,
@@ -141,13 +142,6 @@ export default {
 
       console.log('update: ', this.players)
 
-      if  (this.room.players.p1.username == this.name) {
-        this.cards = turn.p1.playerState.cards
-      }
-      else if  (this.room.players.p2.username == this.name) {
-        this.cards = turn.p2.playerState.cards
-      }
-
       await this.sleep(200)
       await this.refresh()
 
@@ -161,6 +155,18 @@ export default {
 
       // Play cards
       const turn = this.parseTurn(game.data[game.data.length-1])
+      console.log(turn)
+      // Supercharge cost
+      for (let i=0; i<2; i++) {
+        if (turn[i].action.supermove) {
+          this.players[i].supercharge -= 3
+          turn[i].action.card.movement.lateral += turn[i].action.supermove
+          console.log('supermove', turn[i].action.card.movement.lateral)
+        }
+        this.players[i].supercharge -= turn[i].action.card.supercharge_cost
+      }
+
+
       // Movement
       const newPos = this.getPos(turn)
       console.log('movement: ', newPos)
@@ -195,15 +201,9 @@ export default {
         const refs = this.$refs
         const player1_pos = refs[this.players[0].pos][0].offsetLeft
         const player2_pos = refs[this.players[1].pos][0].offsetLeft
-        const player1Height = this.$refs.player1.offsetHeight
-        const player2Height = this.$refs.player2.offsetHeight
-        const topSpace = refs[1][0].offsetTop
         const heightSpace = refs[1][0].offsetHeight
-        const player1Vert = 1 - (this.players[0].vert +1)*0.5
-        const player2Vert = 1 - (this.players[1].vert +1)*0.5
-
-        const player1_vert = topSpace + heightSpace*player1Vert - player1Height*player1Vert
-        const player2_vert = topSpace + heightSpace*player2Vert - player2Height*player2Vert
+        const player1_vert = this.players[0].vert * -1*heightSpace*0.3
+        const player2_vert = this.players[1].vert * -1*heightSpace*0.3
 
         var leftTransition = true
         var topTransition = true
@@ -213,8 +213,8 @@ export default {
 
         this.playerStyles[0].left = player1_pos+'px'
         this.playerStyles[1].left = player2_pos+'px'
-        this.playerStyles[0].top = topSpace + heightSpace*player1Vert - player1Height*player1Vert +'px'
-        this.playerStyles[1].top = topSpace + heightSpace*player2Vert - player2Height*player2Vert +'px'
+        this.playerStyles[0].top = player1_vert +'px'
+        this.playerStyles[1].top = player2_vert +'px'
 
         if (leftTransition || topTransition) {
           const transitionEnded = e => {
@@ -230,7 +230,9 @@ export default {
           resolve()
         }
       })
-      
+    },
+    characterImageUrl (path) {
+      return require('@/assets/characters' + path)
     },
     async damageShake (p) {
       const player = p == 0 ? 'player1' : 'player2'
@@ -430,21 +432,6 @@ export default {
             playersHit[1] = true
           }
         }
-        // If trade, check for crush
-        if (playersHit[0] && playersHit[1]) {
-          if (turn[0].action.card.crush || turn[1].action.card.crush) {
-            playersHit[0] = turn[0].action.card.crush
-            playersHit[1] = turn[0].action.card.crush
-          }
-          else if (turn[0].action.card.crush && turn[1].action.card.crush) {
-            playersHit[0] = true
-            playersHit[1] = true
-          }
-          else {
-            playersHit[0] = true
-            playersHit[1] = true
-          }
-        }
       }
       return playersHit
     },
@@ -458,7 +445,7 @@ export default {
 
           await this.damageShake(i)
 
-          if (playersHit[0] != playersHit[1] || !(turn[i].action.card.tenacity)) {
+          if (!turn[i].action.card.passive.tenacity) {
               this.players[i].pos -= turn[opp].action.card.active.displace.lateral * this.getMoveDir(opp)*-1
               this.players[i].vert = turn[opp].action.card.active.displace.vertical
               this.players[i].state.bind = turn[opp].action.card.active.bind
@@ -527,7 +514,7 @@ export default {
       ]
     this.stage = this.room.stage
 
-    console.log(this.players)
+    console.log('playersInfo', this.playersInfo)
 
     this.players[0] = this.room.data[0].p1.playerState,
     this.players[1] = this.room.data[0].p2.playerState
@@ -535,13 +522,18 @@ export default {
     this.players[0].cards = [...this.room.players.p1.character.cards]
     this.players[1].cards = [...this.room.players.p2.character.cards]
 
+
+    const p1_super_i = this.players[0].cards.findIndex(card => card.card_type.super == true)
+    const p2_super_i = this.players[1].cards.findIndex(card => card.card_type.super == true)
+
+    this.players[0].superCard = this.players[0].cards.splice([p1_super_i], 1)[0]
+    this.players[1].superCard = this.players[1].cards.splice([p2_super_i], 1)[0]
+
     if  (this.room.players.p1.username == this.name) {
-      this.cards = this.players[0].cards
       this.playerState = this.players[0]
       this.playerInfo = this.playersInfo[0]
     }
     else if  (this.room.players.p2.username == this.name) {
-      this.cards = this.players[1].cards
       this.playerState = this.players[1]
       this.playerInfo = this.playersInfo[1]
     }
@@ -572,11 +564,9 @@ export default {
   watch: {
     async players () { //dev-change
       if  (this.room.players.p1.username == this.name) {
-        this.cards = this.players[0].cards
         this.playerState = this.players[0]
       }
       else if  (this.room.players.p2.username == this.name) {
-        this.cards = this.players[1].cards
         this.playerState = this.players[1]
       }
     }
@@ -585,6 +575,10 @@ export default {
 </script>
 
 <style scoped>
+  .game {
+    background-image: url("https://img.wallpapersafari.com/desktop/1920/1080/57/13/JOoBSz.jpg");
+    height: 100%;
+  }
   h5 {
     font-family: 'Paladins Condensed Condensed';
   }
@@ -607,15 +601,19 @@ export default {
     justify-content: center;
   }
   .space {
-    background-color: red;
-    border: 1px solid black;
+    border: 0.2em solid white;
+    background-color: rgba(255, 255, 255, .1);
+    border-radius: 13px;
+    margin: 0.2%;
     width: 10%;
     padding-bottom: 12%;
     font-family: 'Paladins Condensed Condensed';
   }
   .end {
-    background-color: grey;
-    border: 1px solid black;
-    width: 2%;
+    background-color: rgba(255, 255, 255, .3);
+    border: 0.2em solid white;
+    border-radius: 3px;
+    margin: 0.18%;
+    width: 4%;
   }
 </style>

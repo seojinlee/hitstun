@@ -1,6 +1,6 @@
 <template>
   <section class="cards">
-    <div class="cards-container" :class="{super: isSuper}"
+    <div class="cards-container"
       v-if="!playerState.state.hitstun">
 
       <div class="columns">
@@ -15,36 +15,36 @@
               @click="enable_super">
               Super
             </b-button>
+            
         </div>
 
         <div class="column cards">
-          <div class="card-p" 
-            v-for="card in cards"
+          <div class="card-p"
+            v-for="card in playerState.cards"
+            :class="{isSuper: isSuper}"
             :key=card._id
-            @click="playCard(card._id)">
+            @click="playCard(card)">
             <span class="card-text">{{card.name}}</span>
-            <img src="../assets/card_template.png">
+            <img src="@/assets/card_template.png">
           </div>
         </div>
 
       </div>
 
     </div>
-    <b-modal v-model="isModalActive" :width="640" scroll="keep">
+    <b-modal v-model="isModalActive" scroll="keep">
       <div class="modal-card">
         <div class="modal-card-content">
-          <div class="card-super supermove">
-            <span class="card-text">-1</span>
-            <img src="../assets/Superdashback300px.png">
+          <div class="card-super supermove"  @click="superMove(-1)">
+            <img src="@/assets/Basic/Super Dash Back.png">
           </div>
-          <div class="card-super supermove">
-            <span class="card-text">+1</span>
-            <img src="../assets/card_template.png">
+          <div class="card-super supermove"  @click="superMove(1)">
+            <img src="@/assets/Basic/Super Dash In.png">
           </div>
           <div class="card-super supercard"
-            v-if="playerState.supercharge > 3">
-            <span class="card-text">Super Card</span>
-            <img src="../assets/flare_barrage.png">
+            v-if="playerState.supercharge > playerState.superCard.supercharge_cost"
+             @click="playCard(playerState.superCard)">
+            <img :src="imageUrl(playerState.superCard.photo)">
           </div>
         </div>
       </div>
@@ -58,14 +58,11 @@
 
 export default {
   name: 'Cards',
-  props: ['playerInfo', 'playerState', 'cards'],
+  props: ['playerInfo', 'playerState'],
 
   data () {
     return {
       name: '', //dev-change
-      character: {},
-      activeCards: [],
-      supercharge: 0,
       isSuper: false,
       burst: false,
       burstDisable: false,
@@ -88,11 +85,9 @@ export default {
     }
   },
   methods: {
-    playCard (id) {
-      const cardIndex = this.cards.findIndex(card => card._id === id)
-
+    playCard (card) {
       const action = {
-        card: this.cards[cardIndex],
+        card: card,
         supermove: this.supermove,
         burst: this.burst
       }
@@ -100,11 +95,28 @@ export default {
         action: action,
         id: this.name
       })
+
+      this.supermove = 0
+      this.isSuper = false
+      this.isModalActive = false
+
+      if (this.burst) {
+        this. burstDisable = true
+        this.burst = false
+      }
+
     },
     enable_super () {
-      this.isSuper = true
       this.superDisable = true
       this.isModalActive = true
+    },
+    superMove (move) {
+      this.supermove = move
+      this.isSuper = true
+      this.isModalActive = false
+    },
+    imageUrl (path) {
+      return require("@/assets" + path)
     }
   },
   sockets: {
@@ -162,8 +174,9 @@ export default {
     width: 100%;
     background-color: red;
   }
-  .super {
-    background-color: yellow;
+  .isSuper {
+    box-shadow: 0px 0px 10px 5px #FFE000;
+    transition: 0.3s;
   }
   .buttons {
     margin-top: auto;
@@ -178,13 +191,14 @@ export default {
   .card-p {
     position: relative;
     width: 100px;
-    margin: 2px;
+    margin: 0 5px;
     cursor: pointer;
     align-self: flex-end;
     transition: 0.2s;
   }
   .card-p:hover {
     width: 120px;
+    margin: 0 -5px;
     transition: 0.3s;
   }
   .card-text {
@@ -192,13 +206,19 @@ export default {
     top: 20%;
     left: 40%;
   }
-  .modal-card-content {
+  .modal-card {
+    width: 100%;
+    align-items: center;
   }
   .card-super {
+    margin: 30px;
     position: relative;
     display: inline-block;
-    width: 300px;
     cursor: pointer;
+  }
+  .card-super:hover {
+    box-shadow: 0px 0px 15px 5px #FFE000;
+    transition: 0.3s;
   }
   .img {
     box-shadow: 0 0 0 0;
