@@ -172,7 +172,7 @@ router.post('/cards-batch', async (req, res) => {
         "hitstun": "hitstun",
         "bind": "bind",
         "reposition": "reposition",
-        "supercharge": "supercharge"
+        "supercharge": "supercharge_active"
       },
       "target": {
         "high": "high",
@@ -182,7 +182,7 @@ router.post('/cards-batch', async (req, res) => {
       "passive": {
         "unblockable": "unblockable",
         "tenacity": "tenacity",
-        "supercharge": "supercharge",
+        "supercharge": "supercharge_passive",
         "block": "block"
       },
       "version": "version"

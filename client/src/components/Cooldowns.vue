@@ -1,91 +1,62 @@
 <template>
   <section class="cooldowns">
 
-    <div class="columns">
-      <div class="column is-half">
-        <div class="cooldown-container">
+    <div class="cooldown-container">
 
-          <div class="cooldown-row left">
-            <div class="cooldown c-1">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p1_c1" :key="'p1_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-            <div class="cooldown c-2">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p1_c2" :key="'p1_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-            <div class="cooldown c-3">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p1_c3" :key="'p1_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-            <div class="cooldown c-4">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p1_c4" :key="'p1_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-          </div>
-
-          <div class="cooldown-row left">
-            <div class="cooldown-text"> 1 </div>
-            <div class="cooldown-text"> 2 </div>
-            <div class="cooldown-text"> 3 </div>
-            <div class="cooldown-text"> 4 </div>
-          </div>
-
+      <!-- <div class="cooldown-row">
+        <div class="cooldown c-1">
+          <b-tag class="card-tag is-dark"
+            v-for="card in p1_c1" :key="'p1_'+card.name">
+            {{card.name}}
+          </b-tag>
         </div>
+        <div class="cooldown c-2">
+          <b-tag class="card-tag is-dark"
+            v-for="card in p1_c2" :key="'p1_'+card.name">
+            {{card.name}}
+          </b-tag>
+        </div>
+        <div class="cooldown c-3">
+          <b-tag class="card-tag is-dark"
+            v-for="card in p1_c3" :key="'p1_'+card.name">
+            {{card.name}}
+          </b-tag>
+        </div>
+        <div class="cooldown c-4">
+          <b-tag class="card-tag is-dark"
+            v-for="card in p1_c4" :key="'p1_'+card.name">
+            {{card.name}}
+          </b-tag>
+        </div>
+      </div> -->
 
-        <h1 class="text-left">COOLDOWNS</h1>
+      <div class="cooldown-labels">
+        <div class="row">
+          <div class="cooldown-label"> 1 </div>
+          <div class="cooldown-label"> 2 </div>
+          <div class="cooldown-label"> 3 </div>
+          <div class="cooldown-label"> 4 </div>
+        </div>
+        <h1 class="cooldown-text">COOLDOWNS</h1>
       </div>
 
-      <div class="column is-half">
-        <div class="cooldown-container">
+      <div class="card-set-container">
+        <div class="card-set"><img src="@/assets/card_template.png"></div>
+        <div class="card-set"><img src="@/assets/card_template.png"></div>
+      </div>
 
-          <div class="cooldown-row right">
-            <div class="cooldown c-4">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p2_c4" :key="'p2_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-            <div class="cooldown c-3">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p2_c3" :key="'p2_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-            <div class="cooldown c-2">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p2_c2" :key="'p2_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-            <div class="cooldown c-1">
-              <b-tag class="card-tag is-dark"
-                v-for="card in p2_c1" :key="'p2_'+card.name">
-                {{card.name}}
-              </b-tag>
-            </div>
-          </div>
-
-          <div class="cooldown-row right">
-            <div class="cooldown-text"> 4 </div>
-            <div class="cooldown-text"> 3 </div>
-            <div class="cooldown-text"> 2 </div>
-            <div class="cooldown-text"> 1 </div>
-          </div>
-
+      <div class="cooldown-labels">
+        <div class="row">
+          <div class="cooldown-label"> 1 </div>
+          <div class="cooldown-label"> 2 </div>
+          <div class="cooldown-label"> 3 </div>
+          <div class="cooldown-label"> 4 </div>
         </div>
-
-        <h1 class="text-right">COOLDOWNS</h1>
+        <h1 class="cooldown-text">COOLDOWNS</h1>
       </div>
     </div>
+
+    
 
   </section>
 </template>
@@ -186,32 +157,55 @@ export default {
   .cooldowns {
     width: 100%;
     padding: 10px;
-    margin-top: 100px;
+    display: flex;
+    justify-content: space-between;
+    height: 20vw;
+    align-items: flex-end;
   }
   .cooldown-container {
-  }
-  .cooldown-row {
+    display: flex;
     width: 100%;
+    justify-content: center;
+    flex-flow: row nowrap;
+    align-items: flex-end;
+  }
+  .cooldown-labels {
+  }
+  .row {
+    min-width: 30vw;
     display: flex;
   }
-  .left {
-    justify-content: flex-start;
+  .cooldown-label {
+    border: 3px solid white;
+    background-color: rgba(164, 176, 190, 0.6);
+    border-radius: 0.5vw;
+    color: white;
+    text-align: center;
+    color: white;
+    margin: 0.1vw;
+    flex-grow: 1;
   }
-  .right {
-    justify-content: flex-end;
+  .card-set-container {
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 1vw 2vw;
+  }
+  .card-set {
+    position: relative;
+    width: 6vw;
   }
   .cooldown-text {
-    border: 1px solid black;
+    margin-top: 8px;
+    flex-grow: 1;
     text-align: center;
-    width: 22%;
-    margin: -0.5px;
+    color: white;
   }
   .cooldown {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    width: 22%;
+    flex-grow: 1;
     padding: 3px;
+    justify-content: flex-end;
   }
   .card-tag {
     margin: 2px;
@@ -222,11 +216,5 @@ export default {
     align-items: center;
     text-align: center;
     color: white;
-  }
-  .text-left {
-    text-align: left;
-  }
-  .text-right {
-    text-align: right;
   }
 </style>

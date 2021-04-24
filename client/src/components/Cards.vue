@@ -6,16 +6,15 @@
       <div class="columns">
         
         <div class="cloumn is-3 buttons" >
-            <b-button type="is-danger" expanded 
-              :disabled="burstDisable">
-              Burst
-            </b-button>
-            <b-button type="is-warning" expanded 
-              :disabled="superDisable"
-              @click="enable_super">
-              Super
-            </b-button>
-            
+          <b-button type="is-danger" expanded 
+            :disabled="burstDisable">
+            Burst
+          </b-button>
+          <b-button type="is-warning" expanded 
+            :disabled="superDisable"
+            @click="enable_super">
+            Super
+          </b-button>
         </div>
 
         <div class="column cards">
@@ -24,8 +23,7 @@
             :class="{isSuper: isSuper}"
             :key=card._id
             @click="playCard(card)">
-            <span class="card-text">{{card.name}}</span>
-            <img src="@/assets/card_template.png">
+            <img :src="imageUrl(card.photo)">
           </div>
         </div>
 
@@ -36,10 +34,10 @@
       <div class="modal-card">
         <div class="modal-card-content">
           <div class="card-super supermove"  @click="superMove(-1)">
-            <img src="@/assets/Basic/Super Dash Back.png">
+            <img src="@/assets/Basic/SDB.png">
           </div>
           <div class="card-super supermove"  @click="superMove(1)">
-            <img src="@/assets/Basic/Super Dash In.png">
+            <img src="@/assets/Basic/SDI.png">
           </div>
           <div class="card-super supercard"
             v-if="playerState.supercharge > playerState.superCard.supercharge_cost"
@@ -66,7 +64,7 @@ export default {
       isSuper: false,
       burst: false,
       burstDisable: false,
-      superDisable: false,
+      superDisable: true,
       actions: [],
       blankCard: {
         movement: {
@@ -107,8 +105,10 @@ export default {
 
     },
     enable_super () {
-      this.superDisable = true
-      this.isModalActive = true
+      if (this.playerState.supercharge > 2) {
+        this.superDisable = true
+        this.isModalActive = true
+      }
     },
     superMove (move) {
       this.supermove = move
@@ -162,20 +162,24 @@ export default {
 </script>
 
 <style scoped>
-  .cards {
-    margin-top: 30px;
-  }
   .content {
   }
   .cards-container {
-    padding: 0px 80px;
-    position: fixed;
-    bottom: 0px;
-    width: 100%;
-    background-color: red;
+    min-width: 100vw;
+    padding: 0 100px;
+    display: flex;
+    justify-content: flex-end;
   }
-  .isSuper {
-    box-shadow: 0px 0px 10px 5px #FFE000;
+  .columns {
+    flex-grow: 1;
+  }
+  img {
+    transition: 0.3s;
+  }
+  .isSuper > img {
+    box-shadow: 
+      0px 0px 10px 5px #FFE000,
+      inset 0 0 0px 5px #FFE000;
     transition: 0.3s;
   }
   .buttons {
@@ -191,20 +195,15 @@ export default {
   .card-p {
     position: relative;
     width: 100px;
-    margin: 0 5px;
+    margin: 0 10px;
     cursor: pointer;
     align-self: flex-end;
     transition: 0.2s;
   }
   .card-p:hover {
     width: 120px;
-    margin: 0 -5px;
+    margin: 0 0px;
     transition: 0.3s;
-  }
-  .card-text {
-    position: absolute;
-    top: 20%;
-    left: 40%;
   }
   .modal-card {
     width: 100%;
@@ -216,11 +215,15 @@ export default {
     display: inline-block;
     cursor: pointer;
   }
-  .card-super:hover {
+  .card-super > img:hover {
     box-shadow: 0px 0px 15px 5px #FFE000;
     transition: 0.3s;
   }
   .img {
     box-shadow: 0 0 0 0;
+  }
+
+  .card-transition-enter-active, .card-transition-leave-active {
+    transition: opacity;
   }
 </style>

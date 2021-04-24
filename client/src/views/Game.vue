@@ -1,37 +1,155 @@
 <template>
   <div class="game">
-    <section class="HUD">
-      <div class="content columns">
-        <div class="column is-half">
-          <div class="health">
-            <h5>Health: {{this.players[0].health}}</h5>
+
+    <div class="top">
+      <section class="board">
+
+        <section class="HUD">
+          <div class="HUD-row">
+            <h5 class="health-text">
+              {{this.players[0].health}}
+            </h5>
+            <div class="health">
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 14}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 13}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 12}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 11}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 10}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 9}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 8}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 7}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 6}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 5}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 4}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 3}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 2}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 1}, p1_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[0].health > 0}, p1_health_class]">
+              </div>
+            </div>
+
+            <div class="health">
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 0}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 1}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 2}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 3}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 4}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 5}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 6}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 7}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 8}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 9}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 10}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 11}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 12}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 13}, p2_health_class]">
+              </div>
+              <div class="health-point" 
+                :class="[{isOn : this.players[1].health > 14}, p2_health_class]">
+              </div>
+            </div>
+            <h5 class="health-text">
+              {{this.players[1].health}}
+            </h5>
           </div>
-          <div class="burst">
-            <h5>Burst: {{this.players[0].burst}}</h5>
+
+          <div class="HUD-row">
+            <h5 class="supercharge-text">Super charge</h5>
+            <div class="supercharge">
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[0].supercharge > 4}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[0].supercharge > 3}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[0].supercharge > 2}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[0].supercharge > 1}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[0].supercharge > 0}">
+              </div>
+            </div>
+            <div class="supercharge">
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[1].supercharge > 0}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[1].supercharge > 1}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[1].supercharge > 2}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[1].supercharge > 3}">
+              </div>
+              <div class="supercharge-point" 
+                :class="{isOn : this.players[1].supercharge > 4}">
+              </div>
+            </div>
+            <h5 class="supercharge-text">Super charge</h5>
           </div>
-          <div class="supercharge">
-            <h5>Super Charge: {{this.players[0].supercharge}}</h5>
-          </div>
-        </div>
-    
-        <div class="column is-half">
-          <div class="health">
-            <h5>Health: {{this.players[1].health}}</h5>
-          </div>
-          <div class="burst">
-            <h5>Burst: {{this.players[1].burst}}</h5>
-          </div>
-          <div class="supercharge">
-            <h5>Super Charge: {{this.players[1].supercharge}}</h5>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <section class="board">
-      <div class="content">
-    
-        <div class="container">
+        </section>
+
+        <div class="content">
           <div class="players-container">
             <div :id="playersInfo[0].socket_id" class="player player1" ref="player1" :style="playerStyles[0]">
               <img :src="characterImageUrl(playersInfo[0].character.character_card)">
@@ -53,13 +171,18 @@
             </div>
             <div class="end"></div>
           </div>
+      
         </div>
-    
-      </div>
-    </section>
+      </section>
 
-    <Cooldowns :players='players'/>
-    <Cards :playerInfo='playerInfo' :playerState='playerState' />
+      <section class="cooldowns">
+        <Cooldowns :players='players'/>
+      </section>
+    </div>
+
+    <section class="cards">
+      <Cards :playerInfo='playerInfo' :playerState='playerState' />
+    </section>
 
   </div>
 </template>
@@ -156,16 +279,15 @@ export default {
       // Play cards
       const turn = this.parseTurn(game.data[game.data.length-1])
       console.log(turn)
+
       // Supercharge cost
       for (let i=0; i<2; i++) {
         if (turn[i].action.supermove) {
           this.players[i].supercharge -= 3
           turn[i].action.card.movement.lateral += turn[i].action.supermove
-          console.log('supermove', turn[i].action.card.movement.lateral)
         }
         this.players[i].supercharge -= turn[i].action.card.supercharge_cost
       }
-
 
       // Movement
       const newPos = this.getPos(turn)
@@ -174,12 +296,13 @@ export default {
       this.players[0].vert = turn[0].action.card.movement.vertical
       this.players[1].pos = newPos[1]
       this.players[1].vert = turn[1].action.card.movement.vertical
-
       await this.refresh()
+
       console.log('attack phase')
+
       //Attack
-      this.players[0].supercharge += turn[0].action.card.passive.supercharge
-      this.players[1].supercharge += turn[1].action.card.passive.supercharge
+      this.players[0].supercharge = Math.min(this.players[0].supercharge + turn[0].action.card.passive.supercharge, 5)
+      this.players[1].supercharge = Math.min(this.players[1].supercharge + turn[1].action.card.passive.supercharge, 5)
       const playersHit = this.checkHit(turn)
 
       console.log('playersHit: ', playersHit)
@@ -211,10 +334,10 @@ export default {
         if (parseInt(this.playerStyles[0].left) == parseInt(player1_pos) && parseInt(this.playerStyles[1].left) == parseInt(player2_pos)) leftTransition = false
         if (parseInt(this.playerStyles[0].top) == parseInt(player1_vert) && parseInt(this.playerStyles[1].top) == parseInt(player2_vert)) topTransition = false
 
-        this.playerStyles[0].left = player1_pos+'px'
-        this.playerStyles[1].left = player2_pos+'px'
         this.playerStyles[0].top = player1_vert +'px'
         this.playerStyles[1].top = player2_vert +'px'
+        this.playerStyles[0].left = player1_pos+'px'
+        this.playerStyles[1].left = player2_pos+'px'
 
         if (leftTransition || topTransition) {
           const transitionEnded = e => {
@@ -299,34 +422,43 @@ export default {
             this.moveIncrement(0, new_player_pos[0], Math.sign(player_move_count[0])),
             this.moveIncrement(1, new_player_pos[1], Math.sign(player_move_count[1]))
           ]
+          console.log("///// Collision Check /////")
+          console.log("one or less space between players")
           // If collision occurs, run collision resolution
-          if (potentialPos[0] == potentialPos[1] || Math.sign(player_move_count[0]*this.getMoveDir(0)) == Math.sign(player_move_count[1]*this.getMoveDir(1))) {
+          if (potentialPos[0] == potentialPos[1] || Math.sign(player_move_count[0]*this.getMoveDir(0)) != Math.sign(player_move_count[1]*this.getMoveDir(1))) {
+            console.log("collision")
             // Check if one player is airbourne
             if (turn[0].action.card.movement.vertical > 0 || turn[1].action.card.movement.vertical > 0) {
-              if (!(turn[0].action.card.movement.vertical > 0 && turn[1].action.card.movement.vertical > 0)) {
+
+              if (!(turn[0].action.card.movement.vertical) > 0 && !(turn[1].action.card.movement.vertical > 0)) {
+
+                console.log("one player airbourne")
                 // Two players pass through
-                for (let i=0; i<2; i++) {
-                  new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
-                }
-                // If this is the last increment, airbourne player lands on one space after opponent
-                if (Math.abs(player_move_count[0]) + Math.abs(player_move_count[0]) == 0) {
                   for (let i=0; i<2; i++) {
-                    if (turn[i].action.card.movement.vertical > 0) {
-                      new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
-                      // If the airbourne player cannot move because of wall collision, move the player back
-                      if (new_player_pos[0] == new_player_pos[1]) {
-                        new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], -1*Math.sign(player_move_count[i]))
+                    new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
+                  }
+                  // If this is the last increment, airbourne player lands on one space after opponent
+                  if (Math.abs(player_move_count[0]) + Math.abs(player_move_count[0]) == 0) {
+                    for (let i=0; i<2; i++) {
+                      if (turn[i].action.card.movement.vertical > 0) {
+                        new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
+                        // If the airbourne player cannot move because of wall collision, move the player back
+                        if (new_player_pos[0] == new_player_pos[1]) {
+                          new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], -1*Math.sign(player_move_count[i]))
+                        }
                       }
                     }
                   }
-                }
               }
             }
             
             // Collision resolution when neither or both players are airbourne
             else {
+              console.log("both or neither airbourn")
               // If there is one space between players
               if (Math.abs(new_player_pos[0] - new_player_pos[1])-1 === 1) {
+
+                console.log("one space between players")
                 const boundary = [
                   new_player_pos[0] < new_player_pos[1] ? 0 : this.stage.size*2-1,
                   new_player_pos[0] > new_player_pos[1] ? 0 : this.stage.size*2-1
@@ -343,10 +475,13 @@ export default {
                 }
               }
               // If there are no spaces between players, do nothing
+              console.log('no spaces between players')
             }
           }
           // If no collision, move as normal
           else {
+            console.log('no collision')
+
             for (let i=0; i<2; i++) {
               new_player_pos[i] = this.moveIncrement(i, new_player_pos[i], Math.sign(player_move_count[i]))
             }
@@ -436,23 +571,30 @@ export default {
       return playersHit
     },
     async activeEffects (turn, playersHit) {
-      console.log("active effects")
-
       for (let i=0; i<2; i++) {
         if (playersHit[i]) {
           const opp = i == 0 ? 1 : 0
-          this.players[i].health -= turn[opp].action.card.active.damage
 
-          await this.damageShake(i)
+          if (!turn[i].action.card.passive.armour) {
+            this.players[i].health -= turn[opp].action.card.active.damage
+            this.players[opp].supercharge = Math.min(this.players[opp].supercharge + turn[opp].action.card.active.supercharge, 5)
+
+            await this.damageShake(i)
+            await this.sleep(200)
+          }
 
           if (!turn[i].action.card.passive.tenacity) {
               this.players[i].pos -= turn[opp].action.card.active.displace.lateral * this.getMoveDir(opp)*-1
-              this.players[i].vert = turn[opp].action.card.active.displace.vertical
+              this.players[i].vert = turn[opp].action.card.active.displace.vertical 
+              console.log('vert', this.players[i].vert)
               this.players[i].state.bind = turn[opp].action.card.active.bind
               this.players[i].state.hitstun = turn[opp].action.card.active.hitstun
+
+              await this.refresh()
           }
         }
       }
+
     },
 
     async manageCards (turn) {
@@ -491,9 +633,6 @@ export default {
       console.log(this.room.players)
 
       console.log('playerState: ', playerState)
-
-      playerState.p1.vert = 0
-      playerState.p2.vert = 0
 
       await this.sleep(800)
 
@@ -570,20 +709,117 @@ export default {
         this.playerState = this.players[1]
       }
     }
+  },
+
+  computed: {
+    p1_health_class () {
+      if (this.players[0].health < 4) {
+        return "very-low"
+      }
+      else if (this.players[0].health < 8) {
+        return "low"
+      }
+      else {
+        return ""
+      }
+    },
+
+    p2_health_class () {
+      if (this.players[1].health < 4) {
+        return "very-low"
+      }
+      else if (this.players[1].health < 8) {
+        return "low"
+      }
+      else {
+        return ""
+      }    
+    }
+
   }
 }
 </script>
 
 <style scoped>
-  .game {
-    background-image: url("https://img.wallpapersafari.com/desktop/1920/1080/57/13/JOoBSz.jpg");
-    height: 100%;
-  }
   h5 {
-    font-family: 'Paladins Condensed Condensed';
   }
-  .container {
-    padding: 0;
+  .game {
+    font-family: 'Paladins Condensed Condensed';
+    background-image: url("https://img.wallpapersafari.com/desktop/1920/1080/57/13/JOoBSz.jpg");
+    min-height: 100vh;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    padding: 2vw 10vw;
+  }
+  .top {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+  }
+  .HUD {
+    color: white;
+    margin-bottom: 2vw;
+  }
+  .HUD-row {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    margin-bottom: 0.4vw;
+  }
+  .health-text {
+    margin: auto 0;
+    font-size: 2vw;
+  }
+  .health {
+    display: flex;
+    align-self: center;
+    width: 30vw;
+    height: 2vw;
+    border: 3px solid white;
+    background-color: rgba(255, 255, 255, .1);
+    border-radius: 3px;
+    margin: 0 1vw;
+  }
+  .health-point {
+    flex-grow: 1;
+    background-color: rgba(255, 255, 255, .1);
+    height: 100%;
+    transition: background-color 0.3s;
+  }
+  .health-point.isOn {
+    background-color: #48c774;
+    transition: background-color 0.3s;
+  }
+  .health-point.isOn.low {
+    background-color: #ffdd57;
+  }
+  .health-point.isOn.very-low {
+    background-color: #f14668;
+  }
+  .supercharge {
+    display: flex;
+    margin: 0 1vw;
+  }
+  .supercharge-point {
+    margin: 0 0.1vw;
+    flex-grow: 1;
+    width: 3vw;
+    height: 1.5vw;
+    border: 3px solid white;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, .1);
+    transition: background-color 0.3s;
+  }
+  .supercharge-point.isOn {
+    background-color: #ffdd57;
+    transition: background-color 0.3s;
+  }
+  .supercharge-text {
+    margin: auto 0;
+  }
+  .content {
+    position: relative;
   }
   .players-container {
     width: 100%;
@@ -591,7 +827,7 @@ export default {
   }
   .player {
     position: absolute;
-    width: 10%;
+    width: 8vw;
     text-align: center;
     left: 50%;
     transition: left 0.6s, top 0.3s, font-size 0.3s;
@@ -601,19 +837,24 @@ export default {
     justify-content: center;
   }
   .space {
-    border: 0.2em solid white;
+    border: 3px solid white;
     background-color: rgba(255, 255, 255, .1);
-    border-radius: 13px;
-    margin: 0.2%;
-    width: 10%;
-    padding-bottom: 12%;
+    border-radius: 1vw;
+    margin: 0.2vw;
+    width: 8vw;
+    padding-top: 2.45vw;
+    padding-bottom: 2.45vw;
+    padding-right: 0.8vw;
     font-family: 'Paladins Condensed Condensed';
+    text-align: center;
+    font-size: 4vw;
+    color: white;
   }
   .end {
     background-color: rgba(255, 255, 255, .3);
-    border: 0.2em solid white;
-    border-radius: 3px;
-    margin: 0.18%;
-    width: 4%;
+    border: 0.2vw solid white;
+    border-radius: 0.3vw;
+    margin: 0.3vw;
+    width: 3vw;
   }
 </style>
