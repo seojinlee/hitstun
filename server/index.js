@@ -27,7 +27,7 @@ const io = socketio(server, {
 //Connect to MongoDB
 mongoose.set('useCreateIndex', true)
 
-mongoose.connect('mongodb+srv://seojin0404:gbjEc2B2iD5r@hitstun.5oqta.mongodb.net/', {
+mongoose.connect('mongodb+srv://seojin0404:*********@hitstun.5oqta.mongodb.net/', {
  useNewUrlParser: true,
  useUnifiedTopology: true
 }, (err, res) => {
